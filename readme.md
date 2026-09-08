@@ -8,6 +8,7 @@ Projeto desenvolvido para a disciplina **Projeto de Sistemas Robóticos**.
 * Guilherme Novais de Souza
 * Marcus Oliveira
 * Luis Eduardo
+* Hector Julio Pardinho Soares
 
 ## Disciplina
 
