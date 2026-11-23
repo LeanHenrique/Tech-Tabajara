@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+"""SPARRING sumo_dodger: desvia na largada e ataca a lateral do adversário. Só para teste local.
+
+v1 (Fase 2). Estados (os mesmos nomes do relatório):
+  ENGAJAR  encara o adversário e empurra de frente à velocidade máxima.
+  BORDA    prioridade máxima: se o centro passa de R_SAFE, volta para o centro (com ré, se preciso).
+
+Por que assim (medido na Fase 1, ver relatorio/DECISOES.md):
+  * empurrar de frente contra um adversário que também empurra empata (H1); contra um parado, ele cai;
+  * inclinar o heading não ajuda contra quem encara (H2 não confirmada): não há ARRASTAR na v1;
+  * a frenagem de 0,2 m/s consome ~3,8 cm, então a margem da borda é pequena: BORDA vem antes de tudo.
+
+Regras do arquivo (formato do torneio): autossuficiente, só biblioteca padrão, numpy, rospy, mensagens do
+ROS e psr_hero.utils; nenhuma leitura/escrita de arquivo; mesmo código nos dois lados; o nó nunca morre.
+"""
+import json
+import math
+
+import rospy
+from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
+from std_msgs.msg import String
+
+from psr_hero.utils import V_MAX, W_MAX, clamp, pose_from_odom, wrap_angle
+
+RING_RADIUS = 0.40  # m, perde quem tem o CENTRO além disso
+R_SAFE = 0.32  # m, acima disso vale BORDA (frenagem a 0,2 m/s ~3,8 cm + latência: E3)
+R_SAFE_HIST = 0.04  # m, histerese: BORDA só termina abaixo de R_SAFE - R_SAFE_HIST
+KW = 5.0  # ganho de giro do controlador base
+RATE_HZ = 20.0  # frequência do laço de controle
+
+ENGAJAR, BORDA, DESVIO = "ENGAJAR", "BORDA", "DESVIO"
+DODGE_S = 1.2  # s de rodada em que desvia
+
+
+def go_to(me, target, v_max=V_MAX, kw=KW, d_slow=0.05, reverse=False):
+    """Controlador base 'ir até um ponto' (copiado em cada arquivo de jogo). Devolve (v, w, distância).
+
+    err = wrap(atan2(dy, dx) - yaw); w = clamp(kw*err); v = v_max*max(0, cos err)*min(1, dist/d_slow).
+    reverse=True permite ré quando o alvo está atrás (|err| > 90 graus): inverte o heading-alvo e usa v < 0.
+    """
+    dx, dy = target[0] - me[0], target[1] - me[1]
+    dist = math.hypot(dx, dy)
+    if dist < 1e-6:
+        return 0.0, 0.0, dist
+    err = wrap_angle(math.atan2(dy, dx) - me[2])
+    sign = 1.0
+    if reverse and abs(err) > math.pi / 2.0:
+        err = wrap_angle(err - math.pi if err > 0 else err + math.pi)
+        sign = -1.0
+    w = clamp(kw * err, -W_MAX, W_MAX)
+    v = sign * v_max * max(0.0, math.cos(err)) * min(1.0, dist / max(d_slow, 1e-6))
+    return v, w, dist
+
+
+class Sumo:
+    def __init__(self):
+        rospy.init_node("sumo")
+        self.robot = rospy.get_param("~robot", 0)
+        self.opponent = rospy.get_param("~opponent", 1)
+        self.me = None  # (x, y, yaw)
+        self.speed = 0.0  # velocidade linear própria, m/s
+        self.opp = None  # (x, y, yaw)
+        self.estado = ENGAJAR
+        self.round_time = None
+        self.side = None
+
+        self.pub = rospy.Publisher("/hero_%d/cmd_vel" % self.robot, Twist, queue_size=1)
+        rospy.Subscriber("/hero_%d/odom" % self.robot, Odometry, self.on_me, queue_size=1)
+        rospy.Subscriber("/hero_%d/odom" % self.opponent, Odometry, self.on_opp, queue_size=1)
+        rospy.Subscriber("/game/state", String, self.on_state, queue_size=1)
+
+    def on_me(self, msg):
+        self.me = pose_from_odom(msg)
+        self.speed = msg.twist.twist.linear.x
+
+    def on_opp(self, msg):
+        self.opp = pose_from_odom(msg)
+
+    def on_state(self, msg):
+        """Detecta o reinício de rodada (round_time volta a ~0) e zera a máquina de estados."""
+        try:
+            rt = float(json.loads(msg.data).get("round_time"))
+        except (ValueError, TypeError, AttributeError):
+            return
+        if self.round_time is not None and rt < self.round_time - 1.0:
+            self.set_estado(ENGAJAR)
+            self.side = None
+        self.round_time = rt
+
+    def set_estado(self, novo):
+        if novo != self.estado:
+            rospy.loginfo("estado: %s -> %s" % (self.estado, novo))
+            self.estado = novo
+
+    def compute_command(self, me, opp, speed, now):
+        """Devolve (linear_x, angular_z)."""
+        r = math.hypot(me[0], me[1])
+        if self.estado == BORDA and r < R_SAFE - R_SAFE_HIST:
+            self.set_estado(ENGAJAR)
+        elif self.estado != BORDA and r > R_SAFE:
+            self.set_estado(BORDA)
+
+        if self.estado == BORDA:
+            # volta para o centro; com ré se o centro está atrás (não vira as costas para o adversário à toa)
+            v, w, _ = go_to(me, (0.0, 0.0), reverse=True)
+            return v, w
+        if self.round_time is not None and self.round_time < DODGE_S:
+            # largada: sai da linha de ataque do adversário, para o lado oposto ao dele
+            if self.side is None:
+                self.side = -1.0 if opp[1] >= 0.0 else 1.0
+            v, w, _ = go_to(me, (0.0, 0.30 * self.side), d_slow=1e-6)
+            self.set_estado(DESVIO)
+            return v, w
+        self.set_estado(ENGAJAR)
+        # ataca a LATERAL: ponto ao lado do adversário (perpendicular ao heading dele), do lado em que estamos
+        nx, ny = -math.sin(opp[2]), math.cos(opp[2])
+        s = 1.0 if ((me[0] - opp[0]) * nx + (me[1] - opp[1]) * ny) >= 0.0 else -1.0
+        flank = (opp[0] + s * 0.07 * nx, opp[1] + s * 0.07 * ny)
+        if math.hypot(me[0] - opp[0], me[1] - opp[1]) > 0.16:
+            v, w, _ = go_to(me, flank, d_slow=1e-6)
+        else:
+            v, w, _ = go_to(me, (opp[0], opp[1]), d_slow=1e-6)
+        return v, w
+
+    def publish(self, v, w):
+        cmd = Twist()
+        cmd.linear.x = clamp(v, -V_MAX, V_MAX)
+        cmd.angular.z = clamp(w, -W_MAX, W_MAX)
+        self.pub.publish(cmd)
+
+    def step(self):
+        """Um ciclo: SEMPRE publica algo. Sem dados ou com exceção, publica (0, 0)."""
+        v, w = 0.0, 0.0
+        if self.me is not None and self.opp is not None:
+            try:
+                v, w = self.compute_command(self.me, self.opp, self.speed, rospy.get_time())
+            except Exception as exc:  # o nó nunca morre: um erro vira (0, 0)
+                rospy.logwarn_throttle(2.0, "compute_command falhou: %r" % (exc,))
+                v, w = 0.0, 0.0
+        self.publish(v, w)
+
+    def run(self):
+        rate = rospy.Rate(RATE_HZ)
+        self.publish(0.0, 0.0)  # a partida só começa quando os dois times publicam
+        while not rospy.is_shutdown():
+            self.step()
+            rate.sleep()
+
+
+if __name__ == "__main__":
+    Sumo().run()

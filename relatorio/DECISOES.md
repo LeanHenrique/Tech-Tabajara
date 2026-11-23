@@ -95,3 +95,36 @@ Medidas vêm de `exercicios/registros/` (experimentos da Fase 1: `registros/fase
 - **Decisão:** manter a retranca como constante ligável (`PARK_BUS`), documentando quando ela entra.
 - **Evidência:** resposta do usuário no briefing (aceita pelo professor).
 - **Status:** adotada (a implementar).
+
+---
+
+# Fase 3: sparrings (23/11/2026)
+
+Sparrings criados em `exercicios/<jogo>/`: `sumo_facer`, `sumo_dodger`, `ctf_tech`, `ctf_camper`, `soccer_swarm`,
+`soccer_nyx` (e as cópias congeladas `sumo_v1`, `ctf_v1`, `soccer_v1`). Todos sobem sem erro. Resultados de uma
+rodada curta (60 a 100 s) da nossa v1 contra cada um, **sem repetição**:
+
+## [sumô] A v1 perde para quem desvia na largada e ataca a lateral — 23/11/2026
+- **Decisão:** a v2 precisa de uma resposta ao desvio (reorientar rápido para o flanco do adversário e não oferecer a
+  lateral); a v1 só encara a posição atual do adversário.
+- **Evidência:** v1 (hero_0) contra `sumo_dodger`: **1 vitória e 2 derrotas** em 3 rodadas; contra `sumo_facer`:
+  2 empates (esperado, H1). Sem erros nos logs.
+- **Limite:** 3 rodadas é pouco; é um indício, não uma taxa. O `sumo_dodger` é invenção minha a partir do briefing.
+- **Status:** experimental (a confirmar com mais rodadas na Fase 4).
+
+## [ctf] A réplica do Tech funciona e chega a roubar a bandeira; a v1 não fura defensor plantado — 23/11/2026
+- **Decisão:** manter o `ctf_tech` como principal sparring do CTF; o defensor da v2 precisa de **antecipação** (perseguir
+  ao primeiro sinal de pegada), e o atacante da v2 precisa de uma resposta ao defensor plantado.
+- **Evidência:** v1 (azul) contra `ctf_tech`: placar **0 a 0** em 100 s, com o log mostrando
+  `APROXIMAR -> PRESO -> EMPURRAR -> FUGA_RE` e o atacante vermelho **carregando a nossa bandeira** ao final (nosso
+  defensor correu atrás); nosso atacante foi segurado 16 vezes. Contra `ctf_camper`: 0 a 0 (ninguém fura ninguém).
+- **Limite:** o `ctf_tech` é réplica minha do relato do briefing, não o código real do Tech.
+- **Status:** adotada como sparring.
+
+## [futebol] A réplica do Nyx NÃO representa o Nyx real — 23/11/2026
+- **Decisão:** não tirar conclusões sobre retranca a partir do `soccer_nyx`.
+- **Evidência:** a v1 marcou **6 a 0** contra a réplica em ~95 s, enquanto o Nyx real tem 15 gols a favor e 0 contra em
+  28 jogos na liga. Contra `soccer_swarm`: 0 a 0 em ~57 s.
+- **Pendente:** formação real do Nyx (onde ficam os três robôs e quando alguém sai), que o usuário vai observar na
+  liga. Depois disso, ajustar o `soccer_nyx`.
+- **Status:** experimental.
