@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""SPARRING soccer_nyx: retranca com os três na linha do gol e contra-ataque ocasional (simula o Nyx).
-Só para teste local.
+"""SPARRING soccer_nyx: réplica do Nyx como o usuário observou na liga. Só para teste local.
+
+Um robô fica no gol; os outros dois vão em direção à bola: um com a bola e o outro um pouco afastado, atrás
+dele, e eles se alternam (o mais perto da bola, com histerese, é o atacante).
 
 `blue` (robôs 0, 1, 2) ataca +x; `red` (robôs 3, 4, 5) ataca -x. Campo 1,8 x 1,2 m, centro (0, 0), gols de
 0,40 m no meio dos lados curtos. O índice 0 de self.ids é o goleiro (ordem de nascimento).
@@ -263,29 +265,25 @@ class Soccer:
         v, w, _ = go_to(me, in_field((-SUPPORT_X * self.attack, 0.0)), d_slow=0.04, reverse=True)
         return v, w
 
-    def park(self, me, target, yaw):
-        """Vai ao ponto e, chegando, gira para ficar virado para o campo (yaw)."""
-        v, ww, dist = go_to(me, target, d_slow=0.02, reverse=True)
-        if dist > 0.015:
-            return v, ww
-        return 0.0, clamp(KW * wrap_angle(yaw - me[2]), -W_MAX, W_MAX)
-
     def compute_commands(self, poses, ball):
-        """Retranca: três robôs espaçados uniformemente na linha do gol, virados para o campo. O do meio
-        (índice 1) sai para chutar só quando a bola está no campo de ataque, e volta quando ela recua."""
-        x = -0.858 * self.attack  # colados na linha do gol (o centro a 0,042 m do fundo)
-        face = 0.0 if self.attack > 0 else math.pi
-        ys = (0.0, 0.1185, -0.1185)  # 3 x 7,4 cm deixam folgas de ~4,45 cm: menos que a bola (4,28 cm)
+        """Goleiro no gol; atacante com a bola; apoio 0,28 m atrás do atacante (na linha de empurrão)."""
+        striker = self.pick_striker(poses, ball)
+        ux, uy = self.push_dir(ball)
+        sp = poses[striker]
         out = []
         for k, i in enumerate(self.ids):
             me = poses[i]
-            if k == 1 and self.attack * ball[0] > 0.25:
+            if i == striker:
                 self.roles[i] = ATACANTE
-                v, ww = self.striker_cmd(me, ball)
+                v, w = self.striker_safe(me, ball)
+            elif k == 0:
+                self.roles[i] = GOLEIRO
+                v, w = self.keeper(me, ball)
             else:
-                self.roles[i] = GOLEIRO if k == 0 else APOIO
-                v, ww = self.park(me, (x, ys[k]), face)
-            out.append((v, ww))
+                self.roles[i] = APOIO
+                tgt = in_field((sp[0] - 0.28 * ux, sp[1] - 0.28 * uy))
+                v, w, _ = go_to(me, tgt, d_slow=0.04, reverse=True)
+            out.append((v, w))
         return out
 
     def publish(self, i, v, w):

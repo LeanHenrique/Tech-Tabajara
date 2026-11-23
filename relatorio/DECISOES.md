@@ -128,3 +128,31 @@ rodada curta (60 a 100 s) da nossa v1 contra cada um, **sem repetição**:
 - **Pendente:** formação real do Nyx (onde ficam os três robôs e quando alguém sai), que o usuário vai observar na
   liga. Depois disso, ajustar o `soccer_nyx`.
 - **Status:** experimental.
+
+---
+
+# Fase 3 (revisão): adversários reais descritos pelo usuário, 23/11/2026
+
+O usuário observou os dois adversários na liga e descreveu o comportamento. Os sparrings foram refeitos com isso.
+
+## [futebol] Formação do Nyx: goleiro no gol e dois jogadores de linha em dupla — 23/11/2026
+- **Observação (usuário):** um robô fica no gol; os outros dois vão em direção à bola, um com a bola e o outro um pouco
+  afastado, e eles se alternam.
+- **Decisão:** `soccer_nyx` reescrito (goleiro, atacante com a bola e apoio 0,28 m atrás do atacante, papéis trocando
+  pelo tempo de chegada). Substitui a réplica antiga de retranca com três na linha do gol, que estava errada (levou 6 a 0).
+- **Evidência:** nossa v1 (azul) contra o novo `soccer_nyx`: **0 a 0** em ~100 s, compatível com o Nyx real (0 sofridos em
+  28 jogos). Uma rodada, sem repetição.
+- **Consequência para a v2:** o apoio **seguir o atacante** (rebote) em vez de esperar parado; a retranca de três
+  na linha do gol não é o que o Nyx faz.
+- **Status:** adotada como sparring.
+
+## [sumô] Tech: larga a toda em direção ao alvo, empurra até a borda e, se detecta a borda com o inimigo atrás, vira e sai — 23/11/2026
+- **Observação (usuário):** o Tech larga à velocidade máxima em direção ao alvo e vai empurrando até a borda; ao
+  empurrar, fica atrás do adversário. Se detecta a borda e o inimigo ficou mais atrás, **vira e sai da borda**.
+- **Decisão:** `sumo_tech` criado com essa regra (sem ré). Ele empata com um `ENGAJAR` puro, como a liga mostra
+  (10V 17E 1D).
+- **Evidência:** nossa v1 (hero_0) contra `sumo_tech`: **2 empates** em 100 s, 0 vitórias e 0 derrotas.
+- **Oportunidade para a v2 (hipótese, ainda não testada):** quando o Tech vira para sair da borda, ele gira e
+  **oferece a lateral ou as costas**; o `Oportunismo` do briefing (empurrar quando o adversário gira ou está perto da
+  borda) deve aproveitar esse momento.
+- **Status:** adotada como sparring.
