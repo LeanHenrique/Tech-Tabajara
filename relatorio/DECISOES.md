@@ -42,6 +42,28 @@ Medidas vêm de `exercicios/registros/` (experimentos da Fase 1: `registros/fase
   Limite do experimento: o alinhamento do atacante era simples (sem correção fina do deslocamento em x).
 - **Status:** descartada (lateral puro). H2 (inclinação perto dos eixos) continua a testar no E2.
 
+## [sumô] Contra um adversário que encara, empurrar de frente empata e inclinar o heading não ajuda — 23/11/2026
+- **Decisão:** **abandonar o `ARRASTAR` como forma de vencer um adversário que encara e empurra** (o "facer"). Contra
+  ele, o resultado esperado é empate; o ganho vem de **não perder** (`BORDA`, `ANULAR`) e de **aproveitar erros**
+  do adversário (oportunismo), não de uma técnica de arrasto.
+- **Por quê:** com as duas forças saturadas, o par não se move (H1), e a força lateral extra (H2) não aparece quando o
+  adversário gira para acompanhar.
+- **Evidência:** **E2** (`registros/fase1/exp_tilt_00.csv` e `exp_tilt_35.csv`), hero_0 inclinado contra o `exp_facer`
+  (hero_1), 10 rodadas cada:
+
+  | φ do atacante | vitórias | empates | derrotas | deslocamento lateral do adversário (média) |
+  |---|---|---|---|---|
+  | 0° (frontal) | 0 | 10 | 0 | 0,4 cm |
+  | 35° | 0 | 10 | 0 | 4,0 cm (em ~43 s de contato) |
+
+  Todos os empates foram por tempo (40 s). A inclinação foi escolhida a cada rodada para levar o adversário para
+  longe do centro.
+- **Resultado:** **H1 confirmada** (empate frontal). **H2 não confirmada** em φ = 35° contra o facer. Isso também
+  explica a liga: líderes do sumô têm muitos empates (briefing, Seção 4).
+- **Limites:** só φ = 0° e 35° foram medidos; φ = 20° e 50° ficaram pendentes. O facer é meu, não o Tech real.
+  Não testei o `ARRASTAR` contra um adversário que **não** acompanha (parado, ou de costas).
+- **Status:** descartada (como arma contra adversário que encara). Aberta para adversário que não encara.
+
 ## [ctf] Defensor plantado na bandeira: tag 0,10 > contato 0,074 > pegada 0,07 — 23/11/2026
 - **Decisão:** defensor plantado exatamente sobre a bandeira, com posição rígida; o atacante só pega se o deslocar
   uns 4 mm ou mais.

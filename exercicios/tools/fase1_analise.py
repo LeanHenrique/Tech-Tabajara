@@ -109,10 +109,62 @@ def empurrao(caminho):
     return res
 
 
+def rodadas_tilt(caminho):
+    """Por rodada: quem caiu primeiro, em quanto tempo, e quanto o par se deslocou durante o contato."""
+    res = []
+    for n, seg in enumerate(segmentos(ler(caminho))):
+        t_ini = seg[0]["wall"]
+        quedas = {}
+        for lado, (kx, ky) in (("eu", ("x0", "y0")), ("adv", ("x1", "y1"))):
+            q = next((r for r in seg if math.hypot(r[kx], r[ky]) > RAIO), None)
+            quedas[lado] = q["wall"] - t_ini if q else None
+        cont = [r for r in seg if math.hypot(r["x0"] - r["x1"], r["y0"] - r["y1"]) <= CONTATO]
+        if quedas["eu"] is not None and quedas["adv"] is not None:
+            res_ = "E" if abs(quedas["eu"] - quedas["adv"]) < 0.1 else ("V" if quedas["adv"] < quedas["eu"] else "D")
+        elif quedas["adv"] is not None:
+            res_ = "V"
+        elif quedas["eu"] is not None:
+            res_ = "D"
+        else:
+            res_ = "E(tempo)"
+        # deslocamento do adversário perpendicular à direção inicial do ataque (eixo x) durante o contato
+        lat = float("nan")
+        if cont:
+            fim = next((r for r in cont if math.hypot(r["x1"], r["y1"]) > RAIO), cont[-1])
+            lat = fim["y1"] - cont[0]["y1"]
+        res.append(dict(rodada=n, resultado=res_, t_queda_adv=quedas["adv"], t_queda_eu=quedas["eu"],
+                        dur_contato_s=(cont[-1]["wall"] - cont[0]["wall"]) if cont else 0.0, desloc_lateral_adv=lat,
+                        lado=cont[0]["tag"].split("_s")[-1] if cont else ""))
+    return res
+
+
 def main():
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
     modo = sys.argv[1]
+    if modo == "tilt":
+        arquivos = [a for a in sys.argv[2:] if not a.startswith("-")] or [str(p) for p in sorted(PASTA.glob("exp_tilt_*.csv"))]
+        print("%-12s %-8s %-4s %-4s %-4s %-14s %-16s %s" % ("arquivo", "rodadas", "V", "E", "D", "t até vencer", "desloc. lat. adv", "contato"))
+        for a in arquivos:
+            # só rodadas com contato: o nó entra com a rodada em andamento e a última costuma ficar cortada
+            res = [r for r in rodadas_tilt(a) if r["dur_contato_s"] > 0]
+            v = sum(1 for r in res if r["resultado"] == "V")
+            e = sum(1 for r in res if r["resultado"].startswith("E"))
+            d = sum(1 for r in res if r["resultado"] == "D")
+            tv = [r["t_queda_adv"] for r in res if r["resultado"] == "V" and r["t_queda_adv"] is not None]
+            lat = [abs(r["desloc_lateral_adv"]) for r in res if r["desloc_lateral_adv"] == r["desloc_lateral_adv"]]
+            dc = [r["dur_contato_s"] for r in res]
+            print("%-12s %-8d %-4d %-4d %-4d %-14s %-16s %s" % (
+                Path(a).stem.replace("exp_tilt_", "phi="), len(res), v, e, d,
+                ("%.1f s" % (sum(tv) / len(tv))) if tv else "-",
+                ("%.1f cm" % (100 * sum(lat) / len(lat))) if lat else "-",
+                ("%.1f s" % (sum(dc) / len(dc))) if dc else "-"))
+            if "-v" in sys.argv:
+                for r in res:
+                    print("   rod %d: %-8s t_queda_adv=%s t_queda_eu=%s contato=%.1fs lat=%.1fcm lado=%s" % (
+                        r["rodada"], r["resultado"], r["t_queda_adv"], r["t_queda_eu"], r["dur_contato_s"],
+                        100 * r["desloc_lateral_adv"], r["lado"]))
+        return
     if modo == "push":
         arquivos = sys.argv[2:] or [str(p) for p in sorted(PASTA.glob("exp_push_*.csv"))]
         for a in arquivos:

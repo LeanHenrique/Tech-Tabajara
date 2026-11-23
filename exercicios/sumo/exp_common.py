@@ -43,11 +43,14 @@ class ExpNode:
             os.makedirs(OUT_DIR)
         except OSError:
             pass
-        path = os.path.join(OUT_DIR, "%s.csv" % self.csv_name())
-        self.f = open(path, "w")
-        self.f.write("wall,rnd,rt,x0,y0,yaw0,x1,y1,yaw1,v,w,tag\n")
+        nome = self.csv_name()
+        self.f = None  # csv_name() = None: o nó não grava (ex.: o adversário "facer")
+        if nome:
+            path = os.path.join(OUT_DIR, "%s.csv" % nome)
+            self.f = open(path, "w")
+            self.f.write("wall,rnd,rt,x0,y0,yaw0,x1,y1,yaw1,v,w,tag\n")
+            rospy.loginfo("%s: gravando em %s" % (self.name, path))
         self.done = False
-        rospy.loginfo("%s: gravando em %s" % (self.name, path))
 
     def csv_name(self):
         return self.name
@@ -72,7 +75,7 @@ class ExpNode:
 
     def log(self, v, w):
         a, b = self.pose[0], self.pose[1]
-        if a is None or b is None:
+        if self.f is None or a is None or b is None:
             return
         self.f.write("%.3f,%d,%s,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.3f,%.3f,%s\n" % (
             time.time(), self.rnd, "" if self.rt is None else "%.2f" % self.rt,
@@ -85,7 +88,8 @@ class ExpNode:
     def finish(self):
         self.done = True
         self.tag = "done"
-        self.f.flush()
+        if self.f is not None:
+            self.f.flush()
         rospy.loginfo("EXPERIMENT_DONE %s" % self.name)
 
     def run(self):
@@ -101,7 +105,8 @@ class ExpNode:
                     v, w = 0.0, 0.0
             v, w = self.publish(v, w)
             self.log(v, w)
-            self.f.flush()
+            if self.f is not None:
+                self.f.flush()
             rate.sleep()
 
 
