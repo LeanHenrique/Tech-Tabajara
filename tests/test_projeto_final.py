@@ -91,7 +91,7 @@ sys.modules["rospy"] = rospy
 for name, attrs in {
     "geometry_msgs": {}, "geometry_msgs.msg": {"Twist": Twist, "PointStamped": object},
     "nav_msgs": {}, "nav_msgs.msg": {"Odometry": object},
-    "std_msgs": {}, "std_msgs.msg": {"Bool": object},
+    "std_msgs": {}, "std_msgs.msg": {"Bool": object, "String": object},
 }.items():
     m = types.ModuleType(name)
     m.__dict__.update(attrs)
