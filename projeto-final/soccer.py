@@ -30,6 +30,8 @@ from psr_hero.utils import V_MAX, W_MAX, clamp, pose_from_odom, wrap_angle
 
 FIELD_L, FIELD_W = 1.8, 1.2
 GOAL_W = 0.40
+GOAL_MARGIN = 0.05  # m, margem em relação às traves ao escolher onde finalizar
+GOAL_FOLLOW = 0.75  # quanto a finalização acompanha a altura atual da bola (0: centro; 1: mesma altura)
 TEAMS = {"blue": (0, +1), "red": (3, -1)}  # primeiro id do time, sentido de ataque em x
 RATE_HZ = 20.0
 KW = 5.0  # ganho de giro do controlador base
@@ -198,18 +200,29 @@ class Soccer:
         v, w, _ = go_to(me, (x_line, self.keeper_y(ball)), d_slow=0.03, reverse=True)
         return v, w
 
+    def goal_target(self, ball):
+        """Ponto seguro dentro do gol adversário para onde a bola deve ser conduzida.
+
+        A altura acompanha parcialmente a bola, para não gastar tempo trazendo jogadas laterais até o
+        centro. A margem evita mirar nas traves e a suavização reduz mudanças bruscas de direção.
+        """
+        limit = GOAL_W / 2.0 - GOAL_MARGIN
+        return (self.attack * (FIELD_L / 2.0), clamp(GOAL_FOLLOW * ball[1], -limit, limit))
+
     def push_dir(self, ball):
         """Direção (unitária) em que o atacante deve empurrar a bola.
 
-        Normal: da bola para o gol adversário. Com a bola colada no NOSSO fundo (CLEAR_DEPTH), ir ao gol
-        exigiria ficar atrás dela, fora do campo, e empurrar para o nosso gol seria arriscado: então
-        limpa para a lateral (ao longo de y, para o lado onde a bola já está) e um pouco para frente.
+        Normal: da bola para um ponto seguro do gol adversário, em vez de sempre para o centro. Com a bola
+        colada no NOSSO fundo (CLEAR_DEPTH), ir ao gol exigiria ficar atrás dela, fora do campo, e empurrar
+        para o nosso gol seria arriscado: então limpa para a lateral (ao longo de y, para o lado onde a bola
+        já está) e um pouco para frente.
         """
         depth = -self.attack * ball[0]  # > 0: quanto a bola está do lado do nosso gol
         if depth > CLEAR_DEPTH:
             ux, uy = 0.5 * self.attack, (1.0 if ball[1] >= 0.0 else -1.0)
         else:
-            ux, uy = self.attack * (FIELD_L / 2.0) - ball[0], -ball[1]
+            goal_x, goal_y = self.goal_target(ball)
+            ux, uy = goal_x - ball[0], goal_y - ball[1]
         n = math.hypot(ux, uy)
         return (ux / n, uy / n) if n > 1e-6 else (float(self.attack), 0.0)
 
