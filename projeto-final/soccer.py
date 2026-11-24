@@ -4,14 +4,11 @@
 `blue` (robôs 0, 1, 2) ataca +x; `red` (robôs 3, 4, 5) ataca -x. Campo 1,8 x 1,2 m, centro (0, 0), gols de
 0,40 m no meio dos lados curtos. O índice 0 de self.ids é o goleiro (ordem de nascimento).
 
-v2 (Fase 4). Papéis (os mesmos nomes do relatório), reavaliados a cada ciclo:
-  GOLEIRO   fica na linha x = -0,80*attack, na altura em que a bola vai cruzar a linha (usa a velocidade da bola).
-  ATACANTE  o jogador de linha mais perto da bola (com histerese de 20%): vai ao ponto de preparação atrás da
-            bola, na linha bola -> gol adversário, e então atravessa a bola à velocidade máxima. Se estiver do
-            lado errado da bola, contorna por fora (nunca empurra a bola para o próprio gol).
-  APOIO     o outro jogador de linha NÃO espera parado: com a bola no nosso campo cobre o ponto entre a bola e o
-            nosso gol; com a bola no ataque acompanha o atacante, 0,30 m atrás dele (rebote), como o Nyx.
-            (Observado na liga: na v1 o apoio parado era empurrado pelo adversário.)
+v3. Papéis:
+  GOLEIRO   é sempre o primeiro robô do time e nunca participa da seleção de atacante.
+  ATACANTE  é escolhido somente entre os dois jogadores de linha, com histerese temporal.
+  APOIO     ocupa uma linha de cobertura à frente do goleiro quando a bola está no nosso campo; no ataque,
+            acompanha o atacante para disputar rebotes sem ocupar a mesma trajetória.
 Todos têm detector de travamento (ré curta com giro). O placar mudando (gol) reinicia a memória.
 
 Regras do arquivo (formato do torneio): autossuficiente, só biblioteca padrão, numpy, rospy, mensagens do ROS
@@ -45,17 +42,18 @@ SWITCH_GAIN = 0.75  # o desafiante precisa ser pelo menos 25% mais rápido
 SWITCH_MIN_GAIN = 0.15  # e ganhar pelo menos 0,15 s no ETA
 STRIKER_MIN_HOLD = 1.5  # tempo mínimo entre trocas de atacante
 STRIKER_CONFIRM = 0.6  # vantagem precisa persistir por este tempo antes da troca
-GK_EXIT_MARGIN = 0.10  # o goleiro permanece elegível até 10 cm além do limite de entrada
 SUPPORT_BACK = 0.30  # m, o apoio acompanha o atacante a essa distância atrás dele
 SUPPORT_SIDE = 0.12  # m, deslocamento lateral do apoio (não atrapalha a linha de empurrão)
-COVER_DEPTH = 0.25  # m, bola mais funda que isso no nosso campo: o apoio cobre o gol
+COVER_DEPTH = 0.25  # m, a partir daqui o apoio assume uma posição de cobertura defensiva
+SUPPORT_DEF_MIN = 0.18  # m, distância mínima da linha defensiva ao centro do campo
+SUPPORT_DEF_MAX = 0.42  # m, distância máxima da linha defensiva ao centro do campo
+SUPPORT_DEF_Y = 0.24  # m, limite lateral da posição de cobertura
 GK_LOOKAHEAD = 3.0  # s, o goleiro só prevê a bola que chega à linha nesse prazo
 GK_VMIN = 0.03  # m/s, velocidade mínima da bola em direção ao nosso gol para prever
 MARGIN = 0.05  # m, os alvos ficam a pelo menos isso das paredes
 CLEAR_DEPTH = 0.74  # m, bola a mais disso do centro, em direção ao NOSSO gol: tira de lado em vez de ir ao gol
 R_ORB = 0.16  # m, raio da órbita ao redor da bola quando o robô está do lado errado dela
 ORB_STEP = 0.8  # rad, quanto avançar ao longo da órbita a cada ciclo
-GK_CLEAR_DEPTH = 0.78  # m, bola mais funda que isso na nossa área: o goleiro também disputa a bola (a limpa de lado)
 IDLE_S = 1.0  # s com comando praticamente zero = parado sem motivo (rede de segurança)
 T_STUCK = 1.5  # s com comando alto e robô parado = travado
 STUCK_BACK = 0.4  # s de ré ao destravar
@@ -137,6 +135,7 @@ class Soccer:
         self.stuck = dict((i, Stuck()) for i in self.ids)
         self.score = None
         self.roles = {}
+        self.last_role_signature = None
         self.idle_since = None
         self.unstick_until = 0.0
         self.start_time = rospy.get_time()
@@ -212,23 +211,16 @@ class Soccer:
         return d / V_MAX + turn / W_MAX
 
     def pick_striker(self, poses, ball):
-        """Escolhe o atacante com histerese temporal e margem de vantagem.
+        """Escolhe o atacante somente entre os dois jogadores de linha.
 
-        A troca só ocorre quando o desafiante é significativamente mais rápido e mantém
-        essa vantagem por STRIKER_CONFIRM. STRIKER_MIN_HOLD evita alternâncias rápidas.
-        O goleiro tem uma faixa de saída maior que a de entrada para evitar oscilações
-        quando a bola fica próxima do limite da área.
+        O goleiro (self.ids[0]) é permanentemente excluído. A troca entre os jogadores
+        de linha exige vantagem significativa, tempo mínimo e confirmação temporal.
         """
         now = rospy.get_time()
-        depth = -self.attack * ball[0]
         cands = list(self.ids[1:])
-        if depth > GK_CLEAR_DEPTH or (self.striker == self.ids[0] and depth > GK_CLEAR_DEPTH - GK_EXIT_MARGIN):
-            cands.append(self.ids[0])
-
         etas = {i: self.eta(poses[i], ball) for i in cands}
         best = min(cands, key=lambda i: etas[i])
 
-        # Primeira seleção após iniciar ou após um gol: não há atacante a preservar.
         if self.striker not in cands:
             previous = self.striker
             self.striker = best
@@ -255,7 +247,6 @@ class Soccer:
             self.pending_since = None
             return self.striker
 
-        # O mesmo desafiante precisa manter a vantagem durante toda a janela de confirmação.
         if self.pending_striker != best:
             self.pending_striker = best
             self.pending_since = now
@@ -389,11 +380,17 @@ class Soccer:
         return v, w
 
     def support(self, me, ball, striker_pose):
-        """Apoio: com a bola no nosso campo, cobre o ponto entre a bola e o nosso gol; com a bola no ataque,
-        acompanha o atacante, SUPPORT_BACK atrás dele na linha de empurrão e um pouco de lado (rebote)."""
-        if -self.attack * ball[0] > COVER_DEPTH:
-            own = (-KEEPER_X * self.attack, 0.0)
-            tgt = in_field(((ball[0] + own[0]) / 2.0, (ball[1] + own[1]) / 2.0))
+        """Apoio com posição separada do goleiro e do atacante.
+
+        Quando a bola está no nosso campo, forma uma linha de cobertura entre o meio
+        do campo e o goleiro, sem perseguir a bola até a pequena área. No ataque,
+        acompanha o atacante por trás e lateralmente para oferecer opção de rebote.
+        """
+        depth = -self.attack * ball[0]
+        if depth > COVER_DEPTH:
+            cover_depth = clamp(depth * 0.5, SUPPORT_DEF_MIN, SUPPORT_DEF_MAX)
+            tgt = in_field((-self.attack * cover_depth,
+                            clamp(ball[1] * 0.45, -SUPPORT_DEF_Y, SUPPORT_DEF_Y)))
         else:
             ux, uy = self.push_dir(ball)
             nx, ny = -uy, ux
@@ -406,15 +403,21 @@ class Soccer:
     def compute_commands(self, poses, ball):
         """Devolve [(linear_x, angular_z)] x 3, na ordem de self.ids."""
         striker = self.pick_striker(poses, ball)
+        support_id = self.ids[1] if striker == self.ids[2] else self.ids[2]
+        signature = (self.ids[0], striker, support_id)
+        if signature != self.last_role_signature:
+            rospy.loginfo("[PAPEIS] goleiro=hero_%d | atacante=hero_%d | apoio=hero_%d" % signature)
+            self.last_role_signature = signature
+
         out = []
         for k, i in enumerate(self.ids):
             me = poses[i]
-            if i == striker:
-                self.roles[i] = ATACANTE
-                v, w = self.striker_safe(me, ball)
-            elif k == 0:
+            if k == 0:
                 self.roles[i] = GOLEIRO
                 v, w = self.keeper(me, ball)
+            elif i == striker:
+                self.roles[i] = ATACANTE
+                v, w = self.striker_safe(me, ball)
             else:
                 self.roles[i] = APOIO
                 v, w = self.support(me, ball, poses[striker])
@@ -437,7 +440,14 @@ class Soccer:
                     now = rospy.get_time()
                     cmds = []
                     for i, (v, w) in zip(self.ids, out):
-                        rec = self.stuck[i].update(now, self.poses[i], v)
+                        # A recuperação genérica dá ré e gira; isso pode tirar o goleiro da linha.
+                        # O goleiro permanece sob controle exclusivo de keeper().
+                        if i == self.ids[0]:
+                            self.stuck[i].reset()
+                            self.stuck_active.discard(i)
+                            rec = None
+                        else:
+                            rec = self.stuck[i].update(now, self.poses[i], v)
                         if rec is not None:
                             if i not in self.stuck_active:
                                 self.stuck_active.add(i)
