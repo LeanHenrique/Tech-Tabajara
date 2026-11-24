@@ -6,11 +6,18 @@ Arena 1,6 x 1,6 m dividida em x = 0. Bases/bandeiras em (-0,62; 0) azul e (+0,62
 Pegar a bandeira inimiga: < 0,07 m. Pontuar: < 0,14 m da própria base. Na PRÓPRIA metade, tocar um
 oponente (< 0,10 m) o segura 4 s (comandos ignorados); depois ele fica imune por 1,5 s.
 
-v1 (Fase 2). Estados (os mesmos nomes do relatório):
+v2 (Fase 4). Estados (os mesmos nomes do relatório):
   defensor:  PLANTADO (parado sobre a bandeira, de frente para o intruso) e PERSEGUIR (quando a bandeira
              foi levada e o portador está na nossa metade); volta a PLANTADO ao cruzar x = 0.
-  atacante:  IR_BANDEIRA (vai à bandeira inimiga desviando dos oponentes) e VOLTAR (com a bandeira, vai à base).
-             Se travar (comando alto e robô parado), faz uma ré curta com giro.
+  atacante:  IR_BANDEIRA (defensor longe da bandeira: vai à bandeira desviando dos oponentes) e, com o defensor
+             inimigo plantado, o CICLO DE IMUNIDADE: APROXIMAR (encosta no defensor e é segurado 4 s), PRESO
+             (comandos ignorados), EMPURRAR (solto, imune por 1,5 s: vai direto no defensor e na bandeira, sem
+             desviar nem girar) e FUGA_RE (com a bandeira: de ré, de frente para o defensor); VOLTAR (com a bandeira,
+             sem defensor por perto, vai à base).
+
+Correção da v2 (observada na liga): na v1, depois de ser segurado o atacante GIRAVA (repulsão dos oponentes e detector
+de travamento) e voltava a ser segurado. Agora ele rastreia o `held` do próprio robô (do /game/state), usa a janela de
+imunidade para ir direto e não aciona o detector de travamento enquanto está preso.
 
 Medido/derivado do código do juiz (relatorio/DECISOES.md): tag 0,10 > contato 0,074 > pegada 0,07, então um
 defensor exatamente sobre a bandeira só é driblado se for deslocado.
@@ -41,6 +48,9 @@ T_STUCK = 1.5  # s com comando alto e robô parado = travado
 STUCK_BACK = 0.4  # s de ré ao destravar
 
 PLANTADO, PERSEGUIR, IR_BANDEIRA, VOLTAR = "PLANTADO", "PERSEGUIR", "IR_BANDEIRA", "VOLTAR"
+APROXIMAR, PRESO, EMPURRAR, FUGA_RE = "APROXIMAR", "PRESO", "EMPURRAR", "FUGA_RE"
+IMUNE_S = 1.5  # s de imunidade depois de ser solto
+PLANTADO_DIST = 0.15  # m, defensor inimigo a menos disso da bandeira = plantado: usa o ciclo de imunidade
 
 
 def go_to(me, target, v_max=V_MAX, kw=KW, d_slow=0.05, reverse=False):
@@ -129,6 +139,8 @@ class CaptureTheFlag:
         self.estado = PLANTADO if self.role == "defender" else IR_BANDEIRA
         self.stuck = Stuck()
         self.round_time = None
+        self.held_me = False
+        self.immune_until = 0.0
 
         self.pub = rospy.Publisher("/hero_%d/cmd_vel" % self.robot, Twist, queue_size=1)
         rospy.Subscriber("/hero_%d/odom" % self.robot, Odometry, self.on_me, queue_size=1)
@@ -156,15 +168,22 @@ class CaptureTheFlag:
         self.carrying = bool(msg.data)
 
     def on_state(self, msg):
-        """Detecta o reinício de rodada (round_time volta a ~0) e zera a máquina de estados."""
+        """Reinício de rodada (round_time volta a ~0) e rastreio do 'held' do próprio robô (imunidade de 1,5 s)."""
         try:
-            rt = float(json.loads(msg.data).get("round_time"))
+            g = json.loads(msg.data)
+            rt = float(g.get("round_time"))
+            held = g.get("held") or []
         except (ValueError, TypeError, AttributeError):
             return
         if self.round_time is not None and rt < self.round_time - 1.0:
             self.stuck.reset()
+            self.held_me, self.immune_until = False, 0.0
             self.set_estado(PLANTADO if self.role == "defender" else IR_BANDEIRA)
         self.round_time = rt
+        now_held = bool(held[self.robot]) if self.robot < len(held) else False
+        if self.held_me and not now_held:
+            self.immune_until = rospy.get_time() + IMUNE_S  # acabou de ser solto: imune por 1,5 s
+        self.held_me = now_held
 
     def set_estado(self, novo):
         if novo != self.estado:
@@ -199,14 +218,34 @@ class CaptureTheFlag:
     # --- atacante ---------------------------------------------------------------------
 
     def attack(self, me, opponents, enemy_flag, carrying, now):
+        defensor = None
+        if opponents:
+            d = min(opponents, key=lambda o: math.hypot(o[0] - enemy_flag[0], o[1] - enemy_flag[1]))
+            if math.hypot(d[0] - enemy_flag[0], d[1] - enemy_flag[1]) < PLANTADO_DIST:
+                defensor = d  # o defensor inimigo está plantado sobre a bandeira
+        if self.held_me:
+            self.set_estado(PRESO)  # preso: os comandos são ignorados; não gasta o detector de travamento
+            self.stuck.reset()
+            return 0.0, 0.0
         if carrying:
+            if defensor is not None:
+                self.set_estado(FUGA_RE)  # de ré, em linha reta, de frente para o defensor (como o Tech)
+                err = wrap_angle(math.atan2(defensor[1] - me[1], defensor[0] - me[0]) - me[2])
+                return -V_MAX, clamp(KW * err, -W_MAX, W_MAX)
             self.set_estado(VOLTAR)
-            target = self.home
-        else:
-            self.set_estado(IR_BANDEIRA)
-            target = enemy_flag
-        avoid = [(o[0], o[1]) for o in opponents]
-        v, w = steer(me, target, avoid)
+            v, w = steer(me, self.home, [(o[0], o[1]) for o in opponents])
+            rec = self.stuck.update(now, me, v)
+            return rec if rec is not None else (v, w)
+        if defensor is not None:
+            if now < self.immune_until:
+                self.set_estado(EMPURRAR)  # imune: vai direto no defensor (sem desviar nem girar) e na bandeira
+                v, w, _ = go_to(me, (defensor[0], defensor[1]), d_slow=1e-3)
+                return v, w
+            self.set_estado(APROXIMAR)  # encosta no defensor (será segurado: começa um novo ciclo)
+            v, w, _ = go_to(me, (defensor[0], defensor[1]), d_slow=1e-3)
+            return v, w
+        self.set_estado(IR_BANDEIRA)  # defensor longe da bandeira: vai à bandeira desviando dos oponentes
+        v, w = steer(me, enemy_flag, [(o[0], o[1]) for o in opponents])
         rec = self.stuck.update(now, me, v)
         return rec if rec is not None else (v, w)
 
