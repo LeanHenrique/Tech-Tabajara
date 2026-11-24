@@ -41,7 +41,11 @@ PREP = 0.12  # m, distância do ponto de preparação atrás da bola
 FLANK = 0.16  # m, desvio lateral ao contornar a bola
 ALIGN_ERR = 0.26  # rad (~15 graus) máximo de erro de alinhamento para chutar
 ALIGN_LAT = 0.02  # m, desvio lateral máximo para chutar
-SWITCH_GAIN = 0.8  # um novo atacante só assume se o tempo de chegada dele for < 80% do atual
+SWITCH_GAIN = 0.75  # o desafiante precisa ser pelo menos 25% mais rápido
+SWITCH_MIN_GAIN = 0.15  # e ganhar pelo menos 0,15 s no ETA
+STRIKER_MIN_HOLD = 1.5  # tempo mínimo entre trocas de atacante
+STRIKER_CONFIRM = 0.6  # vantagem precisa persistir por este tempo antes da troca
+GK_EXIT_MARGIN = 0.10  # o goleiro permanece elegível até 10 cm além do limite de entrada
 SUPPORT_BACK = 0.30  # m, o apoio acompanha o atacante a essa distância atrás dele
 SUPPORT_SIDE = 0.12  # m, deslocamento lateral do apoio (não atrapalha a linha de empurrão)
 COVER_DEPTH = 0.25  # m, bola mais funda que isso no nosso campo: o apoio cobre o gol
@@ -128,12 +132,15 @@ class Soccer:
         self.ball = None  # (x, y)
         self.ball_v = (0.0, 0.0)  # velocidade da bola no mundo (m/s)
         self.striker = None  # id do atacante atual
+        self.pending_striker = None
+        self.pending_since = None
         self.stuck = dict((i, Stuck()) for i in self.ids)
         self.score = None
         self.roles = {}
         self.idle_since = None
         self.unstick_until = 0.0
         self.start_time = rospy.get_time()
+        self.striker_since = self.start_time
         self.last_status = self.start_time
         self.stuck_active = set()
         self.safe_active = False
@@ -173,6 +180,9 @@ class Soccer:
                            (event, own_score, opp_score, rospy.get_time() - self.start_time,
                             self.snapshot()))
             self.striker = None
+            self.striker_since = rospy.get_time()
+            self.pending_striker = None
+            self.pending_since = None
             for detector in self.stuck.values():
                 detector.reset()
             self.stuck_active.clear()
@@ -202,25 +212,68 @@ class Soccer:
         return d / V_MAX + turn / W_MAX
 
     def pick_striker(self, poses, ball):
-        """Atacante = quem chega primeiro à bola, com histerese de 20%. O goleiro só entra na disputa quando
-        a bola está funda na nossa área (GK_CLEAR_DEPTH): ali o atacante de linha não consegue passar por ele."""
+        """Escolhe o atacante com histerese temporal e margem de vantagem.
+
+        A troca só ocorre quando o desafiante é significativamente mais rápido e mantém
+        essa vantagem por STRIKER_CONFIRM. STRIKER_MIN_HOLD evita alternâncias rápidas.
+        O goleiro tem uma faixa de saída maior que a de entrada para evitar oscilações
+        quando a bola fica próxima do limite da área.
+        """
+        now = rospy.get_time()
+        depth = -self.attack * ball[0]
         cands = list(self.ids[1:])
-        if -self.attack * ball[0] > GK_CLEAR_DEPTH:
+        if depth > GK_CLEAR_DEPTH or (self.striker == self.ids[0] and depth > GK_CLEAR_DEPTH - GK_EXIT_MARGIN):
             cands.append(self.ids[0])
-        best = min(cands, key=lambda i: self.eta(poses[i], ball))
-        if self.striker in cands and best != self.striker:
-            if self.eta(poses[best], ball) >= SWITCH_GAIN * self.eta(poses[self.striker], ball):
-                best = self.striker  # histerese: só troca se o novo for pelo menos 20% mais rápido
-        if best != self.striker:
+
+        etas = {i: self.eta(poses[i], ball) for i in cands}
+        best = min(cands, key=lambda i: etas[i])
+
+        # Primeira seleção após iniciar ou após um gol: não há atacante a preservar.
+        if self.striker not in cands:
             previous = self.striker
-            new_eta = self.eta(poses[best], ball)
-            old_eta = self.eta(poses[previous], ball) if previous in poses else float("inf")
-            old_text = "%.2f" % old_eta if math.isfinite(old_eta) else "n/a"
-            rospy.loginfo("[ATACANTE] %s -> hero_%d | bola=(%.2f, %.2f) | ETA=%s/%.2fs | %s" %
-                           ("nenhum" if previous is None else "hero_%d" % previous, best,
-                            ball[0], ball[1], old_text, new_eta,
-                            "disputa especial na area" if self.ids[0] == best else "selecao por chegada"))
+            self.striker = best
+            self.striker_since = now
+            self.pending_striker = None
+            self.pending_since = None
+            if best != previous:
+                rospy.loginfo("[ATACANTE] %s -> hero_%d | bola=(%.2f, %.2f) | ETA=%.2fs | selecao inicial/inelegibilidade" %
+                               ("nenhum" if previous is None else "hero_%d" % previous,
+                                best, ball[0], ball[1], etas[best]))
+            return best
+
+        current_eta = etas[self.striker]
+        if best == self.striker:
+            self.pending_striker = None
+            self.pending_since = None
+            return self.striker
+
+        challenger_eta = etas[best]
+        gain = current_eta - challenger_eta
+        enough_advantage = (challenger_eta < SWITCH_GAIN * current_eta and gain >= SWITCH_MIN_GAIN)
+        if not enough_advantage:
+            self.pending_striker = None
+            self.pending_since = None
+            return self.striker
+
+        # O mesmo desafiante precisa manter a vantagem durante toda a janela de confirmação.
+        if self.pending_striker != best:
+            self.pending_striker = best
+            self.pending_since = now
+            return self.striker
+
+        held = now - self.striker_since
+        confirmed = now - self.pending_since
+        if held < STRIKER_MIN_HOLD or confirmed < STRIKER_CONFIRM:
+            return self.striker
+
+        previous = self.striker
+        rospy.loginfo("[ATACANTE] hero_%d -> hero_%d | bola=(%.2f, %.2f) | ETA=%.2f->%.2fs | ganho=%.2fs | confirmado=%.1fs" %
+                       (previous, best, ball[0], ball[1], current_eta, challenger_eta,
+                        gain, confirmed))
         self.striker = best
+        self.striker_since = now
+        self.pending_striker = None
+        self.pending_since = None
         return best
 
     def keeper_y(self, ball):
