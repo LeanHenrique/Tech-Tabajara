@@ -32,23 +32,27 @@ GOAL_FOLLOW = 0.75  # quanto a finalização acompanha a altura atual da bola (0
 TEAMS = {"blue": (0, +1), "red": (3, -1)}  # primeiro id do time, sentido de ataque em x
 RATE_HZ = 20.0
 KW = 5.0  # ganho de giro do controlador base
-KEEPER_X = 0.80  # m, a linha do goleiro fica a KEEPER_X do centro, do lado do próprio gol
-KEEPER_Y = 0.16  # m, o goleiro não passa disso (o gol vai até 0,20)
-PREP = 0.12  # m, distância do ponto de preparação atrás da bola
+KEEPER_HOME_X = 0.84  # m, posição próxima à linha do gol quando há perigo
+KEEPER_SWEEP_X = 0.50  # m, posição adiantada quando a bola está longe da nossa área
+KEEPER_Y = 0.15  # m, margem lateral segura dentro da boca do gol
+KEEPER_TRACK_DEPTH = 0.12  # m, começa a acompanhar lateralmente quando a bola entra no nosso campo
+KEEPER_PREDICT_TIME = 3.0  # s, horizonte de previsão de interceptação
+PREP = 0.10  # m, distância do ponto de preparação atrás da bola
 FLANK = 0.16  # m, desvio lateral ao contornar a bola
-ALIGN_ERR = 0.26  # rad (~15 graus) máximo de erro de alinhamento para chutar
-ALIGN_LAT = 0.02  # m, desvio lateral máximo para chutar
+ALIGN_ERR = 0.35  # rad (~20 graus) máximo de erro de alinhamento para chutar
+ALIGN_LAT = 0.05  # m, desvio lateral máximo para chutar
 SWITCH_GAIN = 0.75  # o desafiante precisa ser pelo menos 25% mais rápido
 SWITCH_MIN_GAIN = 0.15  # e ganhar pelo menos 0,15 s no ETA
 STRIKER_MIN_HOLD = 1.5  # tempo mínimo entre trocas de atacante
 STRIKER_CONFIRM = 0.6  # vantagem precisa persistir por este tempo antes da troca
-SUPPORT_BACK = 0.30  # m, o apoio acompanha o atacante a essa distância atrás dele
-SUPPORT_SIDE = 0.12  # m, deslocamento lateral do apoio (não atrapalha a linha de empurrão)
-COVER_DEPTH = 0.25  # m, a partir daqui o apoio assume uma posição de cobertura defensiva
+SUPPORT_BACK = 0.30  # m, reserva para manter separação mínima do atacante
+SUPPORT_SIDE = 0.22  # m, separação lateral do apoio
+SUPPORT_ADVANCE = 0.28  # m, distância à frente da bola para oferecer opção de passe
+COVER_DEPTH = 0.28  # m, a partir daqui o apoio assume uma posição de cobertura defensiva
 SUPPORT_DEF_MIN = 0.18  # m, distância mínima da linha defensiva ao centro do campo
 SUPPORT_DEF_MAX = 0.42  # m, distância máxima da linha defensiva ao centro do campo
 SUPPORT_DEF_Y = 0.24  # m, limite lateral da posição de cobertura
-GK_LOOKAHEAD = 3.0  # s, o goleiro só prevê a bola que chega à linha nesse prazo
+GK_LOOKAHEAD = KEEPER_PREDICT_TIME
 GK_VMIN = 0.03  # m/s, velocidade mínima da bola em direção ao nosso gol para prever
 MARGIN = 0.05  # m, os alvos ficam a pelo menos isso das paredes
 CLEAR_DEPTH = 0.74  # m, bola a mais disso do centro, em direção ao NOSSO gol: tira de lado em vez de ir ao gol
@@ -143,6 +147,10 @@ class Soccer:
         self.last_status = self.start_time
         self.stuck_active = set()
         self.safe_active = False
+        self.keeper_y_filtered = 0.0
+        self.keeper_x_filtered = KEEPER_SWEEP_X
+        self.keeper_filter_time = self.start_time
+        self.last_keeper_log = 0.0
 
         self.pubs = {i: rospy.Publisher("/hero_%d/cmd_vel" % i, Twist, queue_size=1) for i in self.ids}
         for i in range(6):
@@ -267,20 +275,51 @@ class Soccer:
         self.pending_since = None
         return best
 
-    def keeper_y(self, ball):
-        """Altura (y) em que o goleiro deve ficar: onde a bola vai cruzar a linha dele, se vem para o nosso gol."""
-        x_line = -KEEPER_X * self.attack
+    def keeper_target(self, ball, now=None):
+        """Alvo adaptativo do goleiro: avança quando a bola está longe e fecha a linha quando há perigo."""
+        now = rospy.get_time() if now is None else now
+        depth = -self.attack * ball[0]  # positivo quando a bola está no nosso campo
+        danger = clamp((depth + 0.20) / 0.85, 0.0, 1.0)
+        target_x_abs = KEEPER_SWEEP_X + (KEEPER_HOME_X - KEEPER_SWEEP_X) * danger
+        target_x = -self.attack * target_x_abs
+
+        # Longe da área, o goleiro fica centralizado e não persegue a coordenada y da bola.
+        # Só acompanha a bola lateralmente quando ela entra no nosso campo ou vem em direção ao gol.
+        target_y = 0.0
         vx, vy = self.ball_v
-        y = ball[1]
-        if -self.attack * vx > GK_VMIN:  # a bola vem em direção ao nosso gol
+        x_line = target_x
+        moving_to_goal = -self.attack * vx > GK_VMIN
+        intercepting = False
+        if moving_to_goal and abs(vx) > 1e-6:
             t = (x_line - ball[0]) / vx
             if 0.0 < t < GK_LOOKAHEAD:
-                y = ball[1] + vy * t
-        return clamp(y, -KEEPER_Y, KEEPER_Y)
+                target_y = ball[1] + vy * t
+                intercepting = True
+            elif depth > KEEPER_TRACK_DEPTH:
+                target_y = ball[1] * 0.55
+        elif depth > KEEPER_TRACK_DEPTH:
+            target_y = ball[1] * 0.55
+        target_y = clamp(target_y, -KEEPER_Y, KEEPER_Y)
+
+        # Suaviza ruído da odometria sem atrasar demais uma interceptação real.
+        dt = clamp(now - self.keeper_filter_time, 0.0, 0.15)
+        alpha = clamp(dt * (12.0 if intercepting else 5.0), 0.0, 1.0)
+        if dt <= 0.0:
+            alpha = 1.0
+        self.keeper_x_filtered += alpha * (target_x_abs - self.keeper_x_filtered)
+        self.keeper_y_filtered += alpha * (target_y - self.keeper_y_filtered)
+        self.keeper_filter_time = now
+        return -self.attack * self.keeper_x_filtered, clamp(self.keeper_y_filtered, -KEEPER_Y, KEEPER_Y)
 
     def keeper(self, me, ball):
-        x_line = -KEEPER_X * self.attack
-        v, w, _ = go_to(me, (x_line, self.keeper_y(ball)), d_slow=0.03, reverse=True)
+        """Goleiro móvel: sai da pequena área quando não há perigo e fecha a linha ao defender."""
+        target = self.keeper_target(ball)
+        v, w, dist = go_to(me, target, v_max=V_MAX * 0.85, kw=3.8, d_slow=0.07, reverse=True)
+        now = rospy.get_time()
+        if now - self.last_keeper_log >= 3.0:
+            self.last_keeper_log = now
+            rospy.loginfo("[GOLEIRO] hero_%d | pos=(%.2f, %.2f) | alvo=(%.2f, %.2f) | dist=%.2f | profundidade=%.2f" %
+                           (self.ids[0], me[0], me[1], target[0], target[1], dist, -self.attack * ball[0]))
         return v, w
 
     def goal_target(self, ball):
@@ -295,15 +334,15 @@ class Soccer:
     def push_dir(self, ball):
         """Direção (unitária) em que o atacante deve empurrar a bola.
 
-        Normal: da bola para um ponto seguro do gol adversário, em vez de sempre para o centro. Com a bola
-        colada no NOSSO fundo (CLEAR_DEPTH), ir ao gol exigiria ficar atrás dela, fora do campo, e empurrar
-        para o nosso gol seria arriscado: então limpa para a lateral (ao longo de y, para o lado onde a bola
-        já está) e um pouco para frente.
+        Na nossa metade, aponta diretamente para o ataque. Na metade adversária, aponta para um ponto
+        seguro do gol, acompanhando parcialmente a altura atual da bola.
         """
-        depth = -self.attack * ball[0]  # > 0: quanto a bola está do lado do nosso gol
-        if depth > CLEAR_DEPTH:
-            ux, uy = 0.5 * self.attack, (1.0 if ball[1] >= 0.0 else -1.0)
+        depth = -self.attack * ball[0]  # positivo na nossa metade; negativo na metade adversária
+        if depth >= 0.0:
+            # Na defesa e até a linha do meio: avançar em linha reta, sem mirar no gol.
+            ux, uy = float(self.attack), 0.0
         else:
+            # Só na metade adversária começa a orientar a condução para o gol.
             goal_x, goal_y = self.goal_target(ball)
             ux, uy = goal_x - ball[0], goal_y - ball[1]
         n = math.hypot(ux, uy)
@@ -330,30 +369,56 @@ class Soccer:
                 best = (err, q)
         return best[1]
 
+    def push_cmd(self, me, ball, ux, uy):
+        """Mantém o robô atravessando a bola; não reduz a velocidade ao chegar ao alvo."""
+        norm = math.hypot(ux, uy)
+        ux, uy = ux / max(norm, 1e-6), uy / max(norm, 1e-6)
+        desired = math.atan2(uy, ux)
+        err = wrap_angle(desired - me[2])
+        w = clamp(KW * err, -W_MAX, W_MAX)
+        # Com a bola próxima, mantém tração mesmo quando o alvo fica perto por acompanhar a bola.
+        # Se estiver muito de lado/de costas, prioriza recuperar o rumo antes de acelerar.
+        if abs(err) < 0.85:
+            v = V_MAX * max(0.42, math.cos(err))
+        else:
+            v = V_MAX * max(0.0, math.cos(err))
+        return v, w
+
     def striker_cmd(self, me, ball):
+        depth = -self.attack * ball[0]
+        if depth >= 0.0:
+            # Na nossa metade, basta alinhar atrás da bola no eixo de ataque e continuar empurrando.
+            # Não há órbita em torno da bola nem pausa para calcular um ângulo de finalização.
+            dx = me[0] - ball[0]
+            dy = me[1] - ball[1]
+            along = dx * self.attack
+            lateral = dy
+            prep = in_field((ball[0] - self.attack * PREP, ball[1]))
+            if along > -0.06 or abs(lateral) > ALIGN_LAT + 0.03:
+                if math.hypot(me[0] - prep[0], me[1] - prep[1]) > 0.035:
+                    v, w, _ = go_to(me, prep, d_slow=0.04, reverse=True)
+                    return v, w
+            return self.push_cmd(me, ball, float(self.attack), 0.0)
+
         ux, uy = self.push_dir(ball)
         rx, ry = me[0] - ball[0], me[1] - ball[1]
         along = rx * ux + ry * uy  # < 0: estamos atrás da bola, em relação à direção de empurrão
         lateral = -rx * uy + ry * ux  # desvio lateral em relação à linha de empurrão
         if along > -0.06:  # do lado errado da bola: dá a volta por uma órbita, sem tocá-la
-            v, w, _ = go_to(me, self.orbit_point(me, ball, ux, uy), d_slow=0.03)
+            v, w, _ = go_to(me, self.orbit_point(me, ball, ux, uy), d_slow=0.04, reverse=True)
             return v, w
         err = wrap_angle(math.atan2(ball[1] - me[1], ball[0] - me[0]) - me[2])
         if abs(lateral) < ALIGN_LAT + 0.03 and abs(err) < ALIGN_ERR and math.hypot(rx, ry) < 0.22:
-            through = (ball[0] + 0.10 * ux, ball[1] + 0.10 * uy)  # atravessa a bola
-            v, w, _ = go_to(me, through, d_slow=1e-3)
-            return v, w
+            return self.push_cmd(me, ball, ux, uy)
         prep = in_field((ball[0] - PREP * ux, ball[1] - PREP * uy))
         if math.hypot(me[0] - prep[0], me[1] - prep[1]) < 0.03:
             # Chegou ao ponto de preparação (que pode ter sido cortado pela parede, com a bola encostada nela,
             # e então o desvio lateral fica acima da tolerância). Sem esta regra go_to devolveria (0, 0), por
             # estar em cima do alvo, e o robô ficaria parado para sempre.
             if abs(err) < ALIGN_ERR:  # já encara a bola: chuta mesmo com o desvio lateral
-                through = (ball[0] + 0.10 * ux, ball[1] + 0.10 * uy)
-                v, w, _ = go_to(me, through, d_slow=1e-3)
-                return v, w
+                return self.push_cmd(me, ball, ux, uy)
             return 0.0, clamp(KW * err, -W_MAX, W_MAX)  # senão gira no lugar para encarar a bola
-        v, w, _ = go_to(me, prep, d_slow=0.03)
+        v, w, _ = go_to(me, prep, d_slow=0.04, reverse=True)
         return v, w
 
     def striker_safe(self, me, ball):
@@ -380,24 +445,23 @@ class Soccer:
         return v, w
 
     def support(self, me, ball, striker_pose):
-        """Apoio com posição separada do goleiro e do atacante.
-
-        Quando a bola está no nosso campo, forma uma linha de cobertura entre o meio
-        do campo e o goleiro, sem perseguir a bola até a pequena área. No ataque,
-        acompanha o atacante por trás e lateralmente para oferecer opção de rebote.
-        """
+        """Apoio separado do atacante: cobertura em perigo, opção adiantada no meio/ataque."""
         depth = -self.attack * ball[0]
         if depth > COVER_DEPTH:
-            cover_depth = clamp(depth * 0.5, SUPPORT_DEF_MIN, SUPPORT_DEF_MAX)
+            # Cobertura intermediária: não invade a pequena área nem abandona o goleiro.
+            cover_depth = clamp(depth * 0.48, SUPPORT_DEF_MIN, SUPPORT_DEF_MAX)
             tgt = in_field((-self.attack * cover_depth,
-                            clamp(ball[1] * 0.45, -SUPPORT_DEF_Y, SUPPORT_DEF_Y)))
+                            clamp(ball[1] * 0.40, -SUPPORT_DEF_Y, SUPPORT_DEF_Y)))
         else:
-            ux, uy = self.push_dir(ball)
-            nx, ny = -uy, ux
-            lado = 1.0 if ((me[0] - striker_pose[0]) * nx + (me[1] - striker_pose[1]) * ny) >= 0.0 else -1.0
-            tgt = in_field((striker_pose[0] - SUPPORT_BACK * ux + lado * SUPPORT_SIDE * nx,
-                            striker_pose[1] - SUPPORT_BACK * uy + lado * SUPPORT_SIDE * ny))
-        v, w, _ = go_to(me, tgt, d_slow=0.04, reverse=True)
+            # Oferece uma linha de passe à frente da bola, deslocada lateralmente do atacante.
+            side = -1.0 if ball[1] >= 0.0 else 1.0
+            target_x = ball[0] + self.attack * SUPPORT_ADVANCE
+            target_y = clamp(ball[1] + side * SUPPORT_SIDE, -0.42, 0.42)
+            tgt = in_field((target_x, target_y))
+            # Se o alvo ficar praticamente em cima do atacante, abre ainda mais a largura.
+            if math.hypot(tgt[0] - striker_pose[0], tgt[1] - striker_pose[1]) < 0.18:
+                tgt = in_field((target_x, ball[1] - side * (SUPPORT_SIDE + 0.12)))
+        v, w, _ = go_to(me, tgt, d_slow=0.05, reverse=True)
         return v, w
 
     def compute_commands(self, poses, ball):
