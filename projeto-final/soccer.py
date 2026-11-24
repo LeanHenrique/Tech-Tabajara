@@ -4,8 +4,9 @@
 `blue` (robôs 0, 1, 2) ataca +x; `red` (robôs 3, 4, 5) ataca -x. Campo 1,8 x 1,2 m, centro (0, 0), gols de
 0,40 m no meio dos lados curtos. O índice 0 de self.ids é o goleiro (ordem de nascimento).
 
-v4. Papéis:
-  GOLEIRO   defende a linha e sai para rebater/tirar a bola sempre que ela entra na área.
+v4.1. Papéis:
+  GOLEIRO   fecha a linha de fundo em bolas laterais para não deixar espaço junto às traves e sai para
+            rebater/tirar a bola quando ela entra pelo centro da área.
   ATACANTE  escolhido dinamicamente entre os dois jogadores de linha por ETA + histerese; conduz a bola
             continuamente até o gol sem frear durante o drible.
   APOIO     participa ativamente: no ataque fecha o segundo pau / rebote pronto para assumir a bola;
@@ -31,15 +32,17 @@ RATE_HZ = 20.0
 KW = 5.2
 
 # Goleiro
-KEEPER_HOME_X = 0.84
-KEEPER_SWEEP_X = 0.56
-KEEPER_Y = 0.16
-KEEPER_TRACK_DEPTH = 0.10
+KEEPER_LINE_X = 0.86          # grudado na linha de fundo (parede fica em 0.90)
+KEEPER_HOME_X = 0.85          # posição padrão de defesa
+KEEPER_SWEEP_X = 0.72         # limite de avanço reduzido para não tomar bola nas costas
+KEEPER_Y = 0.20               # fecha a trave (boca do gol vai até 0.20)
+KEEPER_TRACK_DEPTH = 0.05
 KEEPER_PREDICT_TIME = 2.5
-KEEPER_CLEAR_DEPTH = 0.52     # bola mais funda que isso no nosso campo -> goleiro sai para tirar
-KEEPER_CLEAR_EXIT = 0.42      # histerese para o goleiro voltar para a meta
-KEEPER_CLEAR_Y = 0.36         # largura da área onde o goleiro sai na bola
-KEEPER_MAX_OUT_X = 0.45       # limite máximo que o goleiro avança para não abandonar o gol
+KEEPER_CLEAR_DEPTH = 0.56     # só sai para rebater se a bola entrar fundo na área
+KEEPER_CLEAR_EXIT = 0.46
+KEEPER_CLEAR_Y = 0.24         # só sai em bolas centrais; laterais ele fecha na linha
+KEEPER_MAX_OUT_X = 0.52
+KEEPER_SIDELINE_Y = 0.36      # a partir daqui considera bola grudada na lateral
 GK_VMIN = 0.03
 
 # Atacante e condução contínua
@@ -253,11 +256,26 @@ class Soccer:
 
         return self.striker
 
-    # --- goleiro (defesa + saída para tirar a bola da área) ---------------------------
+    # --- goleiro (linha de fundo + saída para tirar a bola da área) -------------------
 
     def keeper_target(self, ball, now=None):
         now = rospy.get_time() if now is None else now
         depth = -self.attack * ball[0]
+        on_sideline = abs(ball[1]) >= KEEPER_SIDELINE_Y
+
+        # Bola no nosso campo grudada na lateral ou muito perto da linha de fundo:
+        # goleiro cola na linha de fundo e fecha completamente a trave do lado da bola.
+        if (depth > 0.05 and on_sideline) or depth > 0.65:
+            target_x_abs = KEEPER_LINE_X
+            if on_sideline:
+                target_y = math.copysign(KEEPER_Y, ball[1])
+            else:
+                target_y = clamp(ball[1], -KEEPER_Y, KEEPER_Y)
+            self.keeper_x_filtered = target_x_abs
+            self.keeper_y_filtered = target_y
+            self.keeper_filter_time = now
+            return -self.attack * target_x_abs, target_y
+
         danger = clamp((depth + 0.20) / 0.85, 0.0, 1.0)
         target_x_abs = KEEPER_SWEEP_X + (KEEPER_HOME_X - KEEPER_SWEEP_X) * danger
         target_x = -self.attack * target_x_abs
@@ -272,49 +290,45 @@ class Soccer:
                 target_y = ball[1] + vy * t
                 intercepting = True
             elif depth > KEEPER_TRACK_DEPTH:
-                target_y = ball[1] * 0.65
+                target_y = ball[1] * 0.80
         elif depth > KEEPER_TRACK_DEPTH:
-            target_y = ball[1] * 0.65
+            target_y = ball[1] * 0.80
         target_y = clamp(target_y, -KEEPER_Y, KEEPER_Y)
 
         dt = clamp(now - self.keeper_filter_time, 0.0, 0.15)
-        alpha = clamp(dt * (12.0 if intercepting else 5.0), 0.0, 1.0) if dt > 0.0 else 1.0
+        alpha = clamp(dt * (14.0 if intercepting else 6.0), 0.0, 1.0) if dt > 0.0 else 1.0
         self.keeper_x_filtered += alpha * (target_x_abs - self.keeper_x_filtered)
         self.keeper_y_filtered += alpha * (target_y - self.keeper_y_filtered)
         self.keeper_filter_time = now
         return -self.attack * self.keeper_x_filtered, clamp(self.keeper_y_filtered, -KEEPER_Y, KEEPER_Y)
 
     def keeper(self, me, ball):
-        """Goleiro móvel: sai da área para rebater a bola quando ela entra na zona de perigo."""
+        """Goleiro móvel: fecha a linha de fundo em bolas laterais e sai para rebater bolas centrais."""
         depth = -self.attack * ball[0]
         me_depth = -self.attack * me[0]
         ball_in_box = depth > KEEPER_CLEAR_DEPTH and abs(ball[1]) < KEEPER_CLEAR_Y
-        ball_still_danger = depth > KEEPER_CLEAR_EXIT and abs(ball[1]) < KEEPER_CLEAR_Y + 0.08
+        ball_still_danger = depth > KEEPER_CLEAR_EXIT and abs(ball[1]) < KEEPER_CLEAR_Y + 0.06
 
-        # Ativa/mantém modo de saída para tirar a bola da área
         if ball_in_box and me_depth > KEEPER_MAX_OUT_X:
             self.keeper_clearing = True
         elif not ball_still_danger or me_depth <= KEEPER_MAX_OUT_X:
             self.keeper_clearing = False
 
         if self.keeper_clearing:
-            # Só avança direto se estiver atrás da bola (para não fazer gol contra)
             behind_ball = self.attack * (me[0] - ball[0]) < -0.02
             if behind_ball:
-                # Empurra a bola para frente e levemente para fora da área
                 clear_y = math.copysign(0.35, ball[1]) if abs(ball[1]) > 0.05 else 0.0
                 ux = float(self.attack)
                 uy = clear_y - ball[1]
                 n = math.hypot(ux, uy)
                 return self.push_cmd(me, ball, ux / n, uy / n)
             else:
-                # Se a bola passou do goleiro, volta rápido para trás dela na linha do gol
-                retreat = in_field((-self.attack * KEEPER_HOME_X, clamp(ball[1], -KEEPER_Y, KEEPER_Y)))
+                retreat = in_field((-self.attack * KEEPER_LINE_X, clamp(ball[1], -KEEPER_Y, KEEPER_Y)))
                 v, w, _ = go_to(me, retreat, v_max=V_MAX, kw=5.0, d_slow=0.04, reverse=True)
                 return v, w
 
         target = self.keeper_target(ball)
-        v, w, _ = go_to(me, target, v_max=V_MAX * 0.90, kw=4.2, d_slow=0.06, reverse=True)
+        v, w, _ = go_to(me, target, v_max=V_MAX, kw=4.5, d_slow=0.04, reverse=True)
         return v, w
 
     # --- ataque e condução contínua ---------------------------------------------------
@@ -351,13 +365,11 @@ class Soccer:
 
     def push_cmd(self, me, ball, ux, uy):
         """Conduz a bola continuamente em velocidade máxima, corrigindo o ângulo sem frear."""
-        # Aponta para um ponto ligeiramente à frente da bola na direção do gol
         aim_x = ball[0] + 0.08 * ux
         aim_y = ball[1] + 0.08 * uy
         desired = math.atan2(aim_y - me[1], aim_x - me[0])
         err = wrap_angle(desired - me[2])
         w = clamp(KW * err, -W_MAX, W_MAX)
-        # Mantém tração contínua para nunca perder o contato com a bola
         if abs(err) < 0.90:
             v = V_MAX * max(0.65, math.cos(err))
         else:
@@ -429,27 +441,20 @@ class Soccer:
         depth = -self.attack * ball[0]  # positivo no nosso campo, negativo no ataque
 
         if depth > COVER_DEPTH:
-            # DEFESA ATIVA: posiciona-se na linha entre a bola e o nosso gol para interceptar rebotes
-            # ou bloquear o avanço adversário sem atrapalhar o goleiro.
             cover_depth = clamp(depth - 0.18, SUPPORT_DEF_MIN, SUPPORT_DEF_MAX)
             tgt_x = -self.attack * cover_depth
             tgt_y = clamp(ball[1] * 0.65, -SUPPORT_DEF_Y, SUPPORT_DEF_Y)
             tgt = in_field((tgt_x, tgt_y))
-            # Evita colidir com o atacante se ele estiver recuando na mesma linha
             if math.hypot(tgt[0] - striker_pose[0], tgt[1] - striker_pose[1]) < 0.20:
                 side = -1.0 if striker_pose[1] >= 0.0 else 1.0
                 tgt = in_field((tgt_x, clamp(tgt_y + side * 0.22, -0.45, 0.45)))
         else:
-            # ATAQUE ATIVO: acompanha a jogada pronto para rebote ou finalizar no segundo pau.
-            # Fica do lado oposto ao da bola/atacante, ligeiramente à frente no terço final.
             side = -1.0 if ball[1] >= 0.0 else 1.0
             in_final_third = (self.attack * ball[0]) > 0.30
             if in_final_third:
-                # Fecha o segundo pau na boca da área adversária para empurrar qualquer rebote
                 target_x = self.attack * 0.62
                 target_y = side * 0.18
             else:
-                # Acompanha em diagonal próximo à bola para roubar/assumir rápido se o atacante perder
                 target_x = ball[0] + self.attack * 0.12
                 target_y = clamp(ball[1] + side * SUPPORT_SIDE, -0.44, 0.44)
 
