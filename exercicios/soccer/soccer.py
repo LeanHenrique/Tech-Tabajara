@@ -4,12 +4,14 @@
 `blue` (robôs 0, 1, 2) ataca +x; `red` (robôs 3, 4, 5) ataca -x. Campo 1,8 x 1,2 m, centro (0, 0), gols de
 0,40 m no meio dos lados curtos. O índice 0 de self.ids é o goleiro (ordem de nascimento).
 
-v1 (Fase 2). Papéis (os mesmos nomes do relatório), reavaliados a cada ciclo:
-  GOLEIRO   fica na linha x = -0,80*attack, na altura da bola (|y| <= 0,16).
+v2 (Fase 4). Papéis (os mesmos nomes do relatório), reavaliados a cada ciclo:
+  GOLEIRO   fica na linha x = -0,80*attack, na altura em que a bola vai cruzar a linha (usa a velocidade da bola).
   ATACANTE  o jogador de linha mais perto da bola (com histerese de 20%): vai ao ponto de preparação atrás da
             bola, na linha bola -> gol adversário, e então atravessa a bola à velocidade máxima. Se estiver do
             lado errado da bola, contorna por fora (nunca empurra a bola para o próprio gol).
-  APOIO     o outro jogador de linha: espera recuado em (-0,35*attack, 0).
+  APOIO     o outro jogador de linha NÃO espera parado: com a bola no nosso campo cobre o ponto entre a bola e o
+            nosso gol; com a bola no ataque acompanha o atacante, 0,30 m atrás dele (rebote), como o Nyx.
+            (Observado na liga: na v1 o apoio parado era empurrado pelo adversário.)
 Todos têm detector de travamento (ré curta com giro). O placar mudando (gol) reinicia a memória.
 
 Regras do arquivo (formato do torneio): autossuficiente, só biblioteca padrão, numpy, rospy, mensagens do ROS
@@ -38,7 +40,11 @@ FLANK = 0.16  # m, desvio lateral ao contornar a bola
 ALIGN_ERR = 0.26  # rad (~15 graus) máximo de erro de alinhamento para chutar
 ALIGN_LAT = 0.02  # m, desvio lateral máximo para chutar
 SWITCH_GAIN = 0.8  # um novo atacante só assume se o tempo de chegada dele for < 80% do atual
-SUPPORT_X = 0.35  # m, o apoio espera em x = -SUPPORT_X*attack
+SUPPORT_BACK = 0.30  # m, o apoio acompanha o atacante a essa distância atrás dele
+SUPPORT_SIDE = 0.12  # m, deslocamento lateral do apoio (não atrapalha a linha de empurrão)
+COVER_DEPTH = 0.25  # m, bola mais funda que isso no nosso campo: o apoio cobre o gol
+GK_LOOKAHEAD = 3.0  # s, o goleiro só prevê a bola que chega à linha nesse prazo
+GK_VMIN = 0.03  # m/s, velocidade mínima da bola em direção ao nosso gol para prever
 MARGIN = 0.05  # m, os alvos ficam a pelo menos isso das paredes
 CLEAR_DEPTH = 0.74  # m, bola a mais disso do centro, em direção ao NOSSO gol: tira de lado em vez de ir ao gol
 R_ORB = 0.16  # m, raio da órbita ao redor da bola quando o robô está do lado errado dela
@@ -118,6 +124,7 @@ class Soccer:
         self.ids = [self.first + k for k in range(3)]
         self.poses = {}  # id -> (x, y, yaw), os 6 robôs
         self.ball = None  # (x, y)
+        self.ball_v = (0.0, 0.0)  # velocidade da bola no mundo (m/s)
         self.striker = None  # id do atacante atual
         self.stuck = dict((i, Stuck()) for i in self.ids)
         self.score = None
@@ -137,6 +144,7 @@ class Soccer:
     def on_ball(self, msg):
         p = msg.pose.pose.position
         self.ball = (p.x, p.y)
+        self.ball_v = (msg.twist.twist.linear.x, msg.twist.twist.linear.y)
 
     def on_state(self, msg):
         """Gol (placar mudou): zera o atacante e os detectores de travamento."""
@@ -174,9 +182,20 @@ class Soccer:
         self.striker = best
         return best
 
+    def keeper_y(self, ball):
+        """Altura (y) em que o goleiro deve ficar: onde a bola vai cruzar a linha dele, se vem para o nosso gol."""
+        x_line = -KEEPER_X * self.attack
+        vx, vy = self.ball_v
+        y = ball[1]
+        if -self.attack * vx > GK_VMIN:  # a bola vem em direção ao nosso gol
+            t = (x_line - ball[0]) / vx
+            if 0.0 < t < GK_LOOKAHEAD:
+                y = ball[1] + vy * t
+        return clamp(y, -KEEPER_Y, KEEPER_Y)
+
     def keeper(self, me, ball):
         x_line = -KEEPER_X * self.attack
-        v, w, _ = go_to(me, (x_line, clamp(ball[1], -KEEPER_Y, KEEPER_Y)), d_slow=0.03, reverse=True)
+        v, w, _ = go_to(me, (x_line, self.keeper_y(ball)), d_slow=0.03, reverse=True)
         return v, w
 
     def push_dir(self, ball):
@@ -258,8 +277,19 @@ class Soccer:
             self.idle_since = None
         return v, w
 
-    def support(self, me):
-        v, w, _ = go_to(me, in_field((-SUPPORT_X * self.attack, 0.0)), d_slow=0.04, reverse=True)
+    def support(self, me, ball, striker_pose):
+        """Apoio: com a bola no nosso campo, cobre o ponto entre a bola e o nosso gol; com a bola no ataque,
+        acompanha o atacante, SUPPORT_BACK atrás dele na linha de empurrão e um pouco de lado (rebote)."""
+        if -self.attack * ball[0] > COVER_DEPTH:
+            own = (-KEEPER_X * self.attack, 0.0)
+            tgt = in_field(((ball[0] + own[0]) / 2.0, (ball[1] + own[1]) / 2.0))
+        else:
+            ux, uy = self.push_dir(ball)
+            nx, ny = -uy, ux
+            lado = 1.0 if ((me[0] - striker_pose[0]) * nx + (me[1] - striker_pose[1]) * ny) >= 0.0 else -1.0
+            tgt = in_field((striker_pose[0] - SUPPORT_BACK * ux + lado * SUPPORT_SIDE * nx,
+                            striker_pose[1] - SUPPORT_BACK * uy + lado * SUPPORT_SIDE * ny))
+        v, w, _ = go_to(me, tgt, d_slow=0.04, reverse=True)
         return v, w
 
     def compute_commands(self, poses, ball):
@@ -276,7 +306,7 @@ class Soccer:
                 v, w = self.keeper(me, ball)
             else:
                 self.roles[i] = APOIO
-                v, w = self.support(me)
+                v, w = self.support(me, ball, poses[striker])
             out.append((v, w))
         return out
 

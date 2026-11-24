@@ -65,6 +65,21 @@ class TestSumoV1(unittest.TestCase):
         self.assertEqual(no.estado, "BORDA")
         self.assertLess(v, 0.0)  # ré para o centro, sem virar as costas ao adversário
 
+    def test_em_contato_perto_da_borda_nao_recua(self):
+        """Regressão do bug da v1: a ré da BORDA em contato fazia o par ir até o nosso lado e perdíamos."""
+        no = self.novo()
+        # r = 0,35 (acima de R_SAFE) mas o adversário está encostado, mais para fora que nós
+        v, _ = no.compute_command((0.0, 0.35, math.pi / 2), (0.0, 0.42, -math.pi / 2), 0.0, 0.0)
+        self.assertEqual(no.estado, "ENGAJAR")
+        self.assertGreater(v, 0.15)  # segue empurrando para a frente, não dá ré
+
+    def test_contato_encerra_a_borda_em_andamento(self):
+        no = self.novo()
+        no.compute_command((0.0, 0.35, math.pi / 2), (0.0, 0.0, 0.0), 0.0, 0.0)  # longe: BORDA
+        self.assertEqual(no.estado, "BORDA")
+        no.compute_command((0.0, 0.35, math.pi / 2), (0.0, 0.42, -math.pi / 2), 0.0, 0.0)  # encostou
+        self.assertEqual(no.estado, "ENGAJAR")
+
     def test_histerese_da_borda(self):
         no = self.novo()
         no.compute_command((0.33, 0.0, 0.0), (0.0, 0.0, 0.0), 0.0, 0.0)
@@ -150,6 +165,59 @@ class TestCtfV1(unittest.TestCase):
         self.assertEqual(no.estado, "PERSEGUIR")
         no.compute_command((-0.62, 0.0, 0.0), [(0.10, 0.10, 0.0)], (0.62, 0.0), flag, False, 0.0)  # cruzou x = 0
         self.assertEqual(no.estado, "PLANTADO")
+
+    # --- v2: ciclo de imunidade do atacante ---------------------------------------------------------
+
+    PLANTADO = [(0.62, 0.0, math.pi)]  # defensor inimigo (do azul) exatamente sobre a bandeira (0,62; 0)
+
+    def test_atacante_preso_fica_parado_e_nao_gira(self):
+        no = self.novo()
+        no.on_state(Msg('{"round_time": 10.0, "held": [true, false, false, false]}'))
+        v, w = no.compute_command((0.30, 0.0, 0.0), self.PLANTADO, (0.62, 0.0), (-0.62, 0.0), False, 1.0)
+        self.assertEqual((v, w), (0.0, 0.0))
+        self.assertEqual(no.estado, "PRESO")
+
+    def test_ao_ser_solto_fica_imune_e_vai_direto_no_defensor_sem_girar(self):
+        no = self.novo()
+        no.on_state(Msg('{"round_time": 10.0, "held": [true, false, false, false]}'))
+        no.on_state(Msg('{"round_time": 14.0, "held": [false, false, false, false]}'))  # solto
+        self.assertGreater(no.immune_until, 0.0)
+        # alinhado com o defensor: vai em frente à velocidade máxima, sem desviar (w ~ 0)
+        v, w = no.compute_command((0.30, 0.0, 0.0), self.PLANTADO, (0.62, 0.0), (-0.62, 0.0), False, 0.5)
+        self.assertEqual(no.estado, "EMPURRAR")
+        self.assertGreater(v, 0.19)
+        self.assertAlmostEqual(w, 0.0, places=2)
+
+    def test_sem_imunidade_aproxima_do_defensor_plantado(self):
+        no = self.novo()
+        v, _ = no.compute_command((0.30, 0.0, 0.0), self.PLANTADO, (0.62, 0.0), (-0.62, 0.0), False, 100.0)
+        self.assertEqual(no.estado, "APROXIMAR")
+        self.assertGreater(v, 0.19)
+
+    def test_com_a_bandeira_e_defensor_plantado_foge_de_re(self):
+        no = self.novo()
+        v, w = no.compute_command((0.55, 0.0, math.pi), self.PLANTADO, (0.62, 0.0), (-0.62, 0.0), True, 1.0)
+        self.assertEqual(no.estado, "FUGA_RE")
+        self.assertLess(v, 0.0)  # de ré
+
+    def test_defensor_longe_da_bandeira_usa_o_desvio_normal(self):
+        no = self.novo()
+        no.compute_command((0.0, 0.0, 0.0), [(0.20, 0.30, 0.0)], (0.62, 0.0), (-0.62, 0.0), False, 1.0)
+        self.assertEqual(no.estado, "IR_BANDEIRA")
+
+    def test_reinicio_de_rodada_zera_a_imunidade(self):
+        no = self.novo()
+        no.on_state(Msg('{"round_time": 10.0, "held": [true, false, false, false]}'))
+        no.on_state(Msg('{"round_time": 14.0, "held": [false, false, false, false]}'))
+        no.on_state(Msg('{"round_time": 0.5, "held": [false, false, false, false]}'))  # nova rodada
+        self.assertEqual(no.immune_until, 0.0)
+        self.assertFalse(no.held_me)
+
+    def test_estado_sem_held_nao_quebra(self):
+        no = self.novo()
+        no.on_state(Msg('{"round_time": 10.0}'))
+        no.on_state(Msg('{"round_time": 11.0, "held": null}'))
+        self.assertFalse(no.held_me)
 
     def test_lado_vermelho_espelha(self):
         no = self.novo(**{"~team": "red", "~robot": 2, "~opponents": [0, 1]})
@@ -277,6 +345,41 @@ class TestSoccerV1(unittest.TestCase):
                     me[0] = max(-0.86, min(0.86, me[0] + v * math.cos(me[2]) * 0.05))
                     me[1] = max(-0.56, min(0.56, me[1] + v * math.sin(me[2]) * 0.05))
         self.assertLess(piores, 20, "o atacante ficou %d ciclos seguidos parado" % piores)
+
+    def test_apoio_nao_fica_parado_com_a_bola_no_ataque(self):
+        """Observado na liga: o apoio parado era empurrado pelo adversário. Na v2 ele acompanha o atacante."""
+        no = self.novo("blue")
+        poses = self.poses({1: (0.10, 0.0, 0.0), 2: (-0.35, -0.25, 0.0)})
+        cmds = no.compute_commands(poses, (0.40, 0.05))  # bola no campo de ataque; o robô 1 é o atacante
+        apoio = [i for i in no.ids if no.roles[i] == "APOIO"][0]
+        v, w = cmds[no.ids.index(apoio)]
+        self.assertGreater(abs(v) + abs(w), 0.05)
+
+    def test_apoio_cobre_o_gol_com_a_bola_no_nosso_campo(self):
+        no = self.novo("blue")  # o gol do azul fica em x = -0,9
+        # bola em (-0,40; 0,20): o ponto de cobertura é o meio entre ela e (-0,80; 0), ou seja, (-0,60; 0,10)
+        v, _ = no.support((0.0, 0.0, 0.0), (-0.40, 0.20), (-0.30, 0.20, 0.0))
+        self.assertLess(v, 0.0)  # o ponto está atrás de um robô virado para +x: vai de ré
+
+    def test_goleiro_preve_onde_a_bola_cruza_a_linha(self):
+        no = self.novo("blue")  # gol em -x; linha em x = -0,80
+        no.ball_v = (-0.30, 0.10)  # vem para o nosso gol e sobe
+        y = no.keeper_y((0.0, 0.0))  # t = 0,8/0,3 = 2,67 s; y = 0,267 -> limitado a 0,16
+        self.assertAlmostEqual(y, 0.16)
+        no.ball_v = (-0.30, 0.03)
+        self.assertAlmostEqual(no.keeper_y((0.0, 0.0)), 0.03 * (0.8 / 0.30), places=3)
+
+    def test_goleiro_ignora_bola_que_se_afasta(self):
+        no = self.novo("blue")
+        no.ball_v = (0.30, 0.50)  # indo para o gol adversário
+        self.assertAlmostEqual(no.keeper_y((0.0, 0.10)), 0.10)  # só segue a posição
+        no.ball_v = (0.0, 0.0)
+        self.assertAlmostEqual(no.keeper_y((0.0, -0.05)), -0.05)
+
+    def test_goleiro_do_vermelho_espelha(self):
+        no = self.novo("red")  # gol em +x; linha em x = +0,80
+        no.ball_v = (0.30, 0.03)  # vem para o gol do vermelho
+        self.assertAlmostEqual(no.keeper_y((0.0, 0.0)), 0.03 * (0.8 / 0.30), places=3)
 
     def test_alvos_ficam_dentro_do_campo(self):
         x, y = carregar("soccer").in_field((5.0, -5.0))
