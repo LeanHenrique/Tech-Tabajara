@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """Sumô (RTech Tabajara), um processo por robô. Parâmetros: ~robot, ~opponent.
 
-v1 (Fase 2). Estados (os mesmos nomes do relatório):
-  ENGAJAR  encara o adversário e empurra de frente à velocidade máxima.
-  BORDA    prioridade máxima: se o centro passa de R_SAFE, volta para o centro (com ré, se preciso).
+v2 (Fase 4). Estados (os mesmos nomes do relatório):
+  ENGAJAR  encara o adversário e empurra de frente à velocidade máxima. É também o estado EM CONTATO.
+  BORDA    se o centro passa de R_SAFE e NÃO há contato, volta para o centro (com ré, se preciso).
+
+Correção da v2 (medida, ver relatorio/DECISOES.md): na v1 a BORDA valia mesmo em contato. Quando o par chegava perto
+da borda do adversário (e a nossa, r > R_SAFE), a ré para o centro tirava o nosso empurrão e o adversário nos levava
+até o nosso lado: 3 derrotas em 12 rodadas contra o sumo_dodger, todas assim. Com as duas forças saturadas e
+opostas a força líquida é zero e o par mantém a velocidade que tem; recuar deixa só a força dele. Em contato, a
+resposta certa é manter o empurrão.
 
 Por que assim (medido na Fase 1, ver relatorio/DECISOES.md):
   * empurrar de frente contra um adversário que também empurra empata (H1); contra um parado, ele cai;
@@ -26,6 +32,7 @@ from psr_hero.utils import V_MAX, W_MAX, clamp, pose_from_odom, wrap_angle
 RING_RADIUS = 0.40  # m, perde quem tem o CENTRO além disso
 R_SAFE = 0.32  # m, acima disso vale BORDA (frenagem a 0,2 m/s ~3,8 cm + latência: E3)
 R_SAFE_HIST = 0.04  # m, histerese: BORDA só termina abaixo de R_SAFE - R_SAFE_HIST
+CONTACT_DIST = 0.10  # m, a menos disso entre os centros há contato (2 raios = 0,074): não recua
 KW = 5.0  # ganho de giro do controlador base
 RATE_HZ = 20.0  # frequência do laço de controle
 
@@ -93,9 +100,10 @@ class Sumo:
     def compute_command(self, me, opp, speed, now):
         """Devolve (linear_x, angular_z)."""
         r = math.hypot(me[0], me[1])
-        if self.estado == BORDA and r < R_SAFE - R_SAFE_HIST:
-            self.set_estado(ENGAJAR)
-        elif self.estado != BORDA and r > R_SAFE:
+        contato = math.hypot(opp[0] - me[0], opp[1] - me[1]) < CONTACT_DIST
+        if self.estado == BORDA and (r < R_SAFE - R_SAFE_HIST or contato):
+            self.set_estado(ENGAJAR)  # em contato nunca recua: manter o empurrão
+        elif self.estado != BORDA and r > R_SAFE and not contato:
             self.set_estado(BORDA)
 
         if self.estado == BORDA:
