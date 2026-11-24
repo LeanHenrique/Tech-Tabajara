@@ -1,0 +1,23 @@
+# Testes do ajuste do apoio (soccer_v3_apoio.py, NÃO está na liga). Colar na classe TestSoccerV1 para rodar.
+# Obs.: com ele, test_apoio_cobre_o_gol espera w != 0 e v == 0 (sem ré), em vez de v < 0.
+    def test_apoio_trava_o_lado_e_nao_oscila(self):
+        """O jogador mais longe da bola ficava 'meio louco': o lado e a ré trocavam a cada ciclo."""
+        no = self.novo("blue")
+        lados = set()
+        for y in (0.30, 0.10, -0.10, -0.30, 0.05):  # o apoio atravessa a linha de empurrão
+            no.support((-0.30, y, 0.0), (0.40, 0.0), (0.10, 0.0, 0.0))
+            lados.add(no.support_side)
+        self.assertEqual(len(lados), 1)
+
+    def test_apoio_nao_da_re(self):
+        no = self.novo("blue")
+        v, _ = no.support((0.0, 0.0, 0.0), (0.40, 0.0), (-0.30, 0.0, 0.0))  # alvo atrás: só gira
+        self.assertGreaterEqual(v, 0.0)
+
+    def test_trocar_de_atacante_libera_o_lado_do_apoio(self):
+        no = self.novo("blue")
+        no.support_side = 1.0
+        no.striker = 1
+        no.compute_commands(self.poses({2: (-0.30, 0.20, 0.0)}), (-0.3, 0.2))  # o robô 2 passa a ser o atacante
+        self.assertIsNone(no.support_side)
+

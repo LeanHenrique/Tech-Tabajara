@@ -1,0 +1,54 @@
+# Testes da tática experimental ctf_v3_contornar.py (NÃO está na liga). Colar na classe TestCtfV1 para rodar.
+    # --- v3: defensor ATIVO (tática do Claude contra o TuoLing) ----------------------------------------
+
+    ATIVO = [(0.30, 0.10, math.pi)]  # defensor inimigo (do azul) fora da bandeira, no meio do campo dele
+
+    def test_defensor_ativo_perto_faz_contornar(self):
+        no = self.novo()
+        v, w = no.compute_command((0.10, 0.0, 0.0), self.ATIVO, (0.62, 0.0), (-0.62, 0.0), False, 100.0)
+        self.assertEqual(no.estado, "CONTORNAR")
+        self.assertGreater(v, 0.0)
+        self.assertNotEqual(w, 0.0)
+
+    def test_de_frente_para_o_defensor_com_a_bandeira_atras_da_re_ate_ela(self):
+        no = self.novo()
+        # virado para -x (para o defensor, a 0,30 m) e com a bandeira (0,62; 0) logo atrás
+        v, w = no.compute_command((0.40, 0.0, math.pi), [(0.10, 0.0, 0.0)], (0.62, 0.0), (-0.62, 0.0), False, 100.0)
+        self.assertEqual(no.estado, "RE_BANDEIRA")
+        self.assertLess(v, 0.0)
+        self.assertAlmostEqual(w, 0.0, places=1)  # continua encarando o defensor
+
+    def test_re_continua_encarando_o_defensor_que_se_mexe(self):
+        no = self.novo()
+        v, w = no.compute_command((0.40, 0.0, math.pi), [(0.10, 0.10, 0.0)], (0.62, 0.0), (-0.62, 0.0), False, 100.0)
+        self.assertEqual(no.estado, "RE_BANDEIRA")
+        self.assertLess(w, 0.0)  # o defensor está à direita de quem olha para -x: gira para encará-lo
+
+    def test_imune_com_defensor_ativo_corre_direto_para_a_bandeira(self):
+        no = self.novo()
+        no.on_state(Msg('{"round_time": 10.0, "held": [true, false, false, false]}'))
+        no.on_state(Msg('{"round_time": 14.0, "held": [false, false, false, false]}'))  # solto: imune
+        v, w = no.compute_command((0.10, 0.0, 0.0), self.ATIVO, (0.62, 0.0), (-0.62, 0.0), False, 0.5)
+        self.assertEqual(no.estado, "CORRIDA")
+        self.assertGreater(v, 0.19)
+        self.assertAlmostEqual(w, 0.0, places=2)
+
+    def test_com_a_bandeira_e_defensor_colado_a_base_do_outro_lado_foge_de_re(self):
+        no = self.novo()
+        # nós em (0,45; 0) com a bandeira; defensor ativo à frente (-x? não: a base azul está em -x, o defensor em +x)
+        v, _ = no.compute_command((0.30, 0.0, 0.0), [(0.45, 0.0, math.pi)], (0.62, 0.0), (-0.62, 0.0), True, 1.0)
+        self.assertEqual(no.estado, "FUGA_RE")  # defensor à frente (+x), base atrás (-x): de ré, de frente para ele
+        self.assertLess(v, 0.0)
+
+    def test_com_a_bandeira_e_defensor_do_lado_da_base_desvia_em_vez_de_ré(self):
+        no = self.novo()
+        no.compute_command((0.30, 0.0, math.pi), [(0.0, 0.0, 0.0)], (0.62, 0.0), (-0.62, 0.0), True, 1.0)  # defensor no caminho
+        self.assertEqual(no.estado, "VOLTAR")
+
+    def test_orbita_nunca_coincide_com_a_posicao_do_atacante(self):
+        no = self.novo()
+        for mx, my in ((0.1, 0.0), (0.3, 0.3), (-0.2, 0.5), (0.5, -0.4)):
+            pt = no.orbita((mx, my, 0.0), (0.2, 0.0, 0.0), (0.62, 0.0))
+            self.assertGreater(math.hypot(pt[0] - mx, pt[1] - my), 0.01)
+            self.assertLessEqual(max(abs(pt[0]), abs(pt[1])), 0.75)
+
