@@ -133,6 +133,10 @@ class Soccer:
         self.roles = {}
         self.idle_since = None
         self.unstick_until = 0.0
+        self.start_time = rospy.get_time()
+        self.last_status = self.start_time
+        self.stuck_active = set()
+        self.safe_active = False
 
         self.pubs = {i: rospy.Publisher("/hero_%d/cmd_vel" % i, Twist, queue_size=1) for i in self.ids}
         for i in range(6):
@@ -156,10 +160,38 @@ class Soccer:
         except (ValueError, TypeError, AttributeError):
             return
         if self.score is not None and score != self.score:
+            old_blue, old_red = self.score
+            new_blue, new_red = score
+            if self.team == "blue":
+                delta_own, delta_opp = new_blue - old_blue, new_red - old_red
+                own_score, opp_score = new_blue, new_red
+            else:
+                delta_own, delta_opp = new_red - old_red, new_blue - old_blue
+                own_score, opp_score = new_red, new_blue
+            event = "NOSSO" if delta_own > delta_opp else "ADVERSARIO" if delta_opp > delta_own else "PLACAR"
+            rospy.loginfo("[GOL] %s | placar %d x %d | t=%.1fs | %s" %
+                           (event, own_score, opp_score, rospy.get_time() - self.start_time,
+                            self.snapshot()))
             self.striker = None
-            for s in self.stuck.values():
-                s.reset()
+            for detector in self.stuck.values():
+                detector.reset()
+            self.stuck_active.clear()
         self.score = score
+
+    def snapshot(self):
+        """Resumo compacto da bola e das posições para logs de eventos."""
+        ball = "bola=indisponivel" if self.ball is None else "bola=(%.2f, %.2f) v=(%.2f, %.2f)" % (
+            self.ball[0], self.ball[1], self.ball_v[0], self.ball_v[1])
+        robots = " | ".join("hero_%d=(%.2f, %.2f)" % (i, self.poses[i][0], self.poses[i][1])
+                            for i in sorted(self.poses))
+        return "%s atacante=%s | %s" % (ball, "hero_%d" % self.striker if self.striker is not None else "nenhum", robots)
+
+    def log_status(self, now):
+        if now - self.last_status < 5.0:
+            return
+        self.last_status = now
+        rospy.loginfo("[STATUS] t=%.1fs time=%s | %s" %
+                       (now - self.start_time, self.team, self.snapshot()))
 
     # --- papéis -----------------------------------------------------------------------
 
@@ -180,7 +212,14 @@ class Soccer:
             if self.eta(poses[best], ball) >= SWITCH_GAIN * self.eta(poses[self.striker], ball):
                 best = self.striker  # histerese: só troca se o novo for pelo menos 20% mais rápido
         if best != self.striker:
-            rospy.loginfo("atacante: %s -> %s" % (self.striker, best))
+            previous = self.striker
+            new_eta = self.eta(poses[best], ball)
+            old_eta = self.eta(poses[previous], ball) if previous in poses else float("inf")
+            old_text = "%.2f" % old_eta if math.isfinite(old_eta) else "n/a"
+            rospy.loginfo("[ATACANTE] %s -> hero_%d | bola=(%.2f, %.2f) | ETA=%s/%.2fs | %s" %
+                           ("nenhum" if previous is None else "hero_%d" % previous, best,
+                            ball[0], ball[1], old_text, new_eta,
+                            "disputa especial na area" if self.ids[0] == best else "selecao por chegada"))
         self.striker = best
         return best
 
@@ -279,13 +318,19 @@ class Soccer:
         if now < self.unstick_until:
             v, w, _ = go_to(me, ball, d_slow=1e-3)
             return v, w
+        if self.safe_active:
+            rospy.loginfo("[SEGURANCA] atacante hero_%d saiu do movimento direto | eu=(%.2f, %.2f) | bola=(%.2f, %.2f)" %
+                           (self.striker, me[0], me[1], ball[0], ball[1]))
+            self.safe_active = False
         v, w = self.striker_cmd(me, ball)
         if abs(v) < 0.02 and abs(w) < 0.3:
             if self.idle_since is None:
                 self.idle_since = now
             elif now - self.idle_since > IDLE_S:
                 self.idle_since, self.unstick_until = None, now + 0.8
-                rospy.logwarn_throttle(2.0, "atacante parado sem motivo: empurra direto na bola")
+                self.safe_active = True
+                rospy.logwarn("[SEGURANCA] atacante hero_%d sem comando por %.1fs; indo direto para a bola | eu=(%.2f, %.2f) | bola=(%.2f, %.2f)" %
+                               (self.striker, IDLE_S, me[0], me[1], ball[0], ball[1]))
         else:
             self.idle_since = None
         return v, w
@@ -341,13 +386,23 @@ class Soccer:
                     for i, (v, w) in zip(self.ids, out):
                         rec = self.stuck[i].update(now, self.poses[i], v)
                         if rec is not None:
-                            rospy.loginfo_throttle(2.0, "robô %d travado: ré curta com giro" % i)
+                            if i not in self.stuck_active:
+                                self.stuck_active.add(i)
+                                anchor = self.stuck[i].anchor
+                                rospy.logwarn("[TRAVAMENTO] hero_%d iniciou manobra | pos=(%.2f, %.2f) | comando=(%.2f, %.2f) | %s" %
+                                              (i, self.poses[i][0], self.poses[i][1], v, w,
+                                               "atacante" if i == self.striker else self.roles.get(i, "sem papel")))
+                        elif i in self.stuck_active:
+                            self.stuck_active.remove(i)
+                            rospy.loginfo("[TRAVAMENTO] hero_%d encerrou manobra | pos=(%.2f, %.2f)" %
+                                          (i, self.poses[i][0], self.poses[i][1]))
                         cmds.append(rec if rec is not None else (float(v), float(w)))
                 else:
                     rospy.logwarn_throttle(2.0, "compute_commands devolveu %d comandos" % len(out))
             except Exception as exc:  # o nó nunca morre: um erro vira (0, 0)
                 rospy.logwarn_throttle(2.0, "compute_commands falhou: %r" % (exc,))
                 cmds = [(0.0, 0.0)] * 3
+        self.log_status(rospy.get_time())
         for i, (v, w) in zip(self.ids, cmds):
             self.publish(i, v, w)
 
