@@ -156,3 +156,54 @@ O usuário observou os dois adversários na liga e descreveu o comportamento. Os
   **oferece a lateral ou as costas**; o `Oportunismo` do briefing (empurrar quando o adversário gira ou está perto da
   borda) deve aproveitar esse momento.
 - **Status:** adotada como sparring.
+
+---
+
+# Fase 4: v2 (23/11/2026)
+
+## [sumô] Em contato, a BORDA não pode recuar: era a causa das derrotas da v1 — 23/11/2026
+- **Decisão:** na v2 a `BORDA` só vale **sem contato** (distância entre centros ≥ 0,10 m). Em contato, o robô mantém o
+  empurrão (`ENGAJAR`).
+- **Por quê:** com as duas forças saturadas e opostas a força líquida é zero e o par **mantém a velocidade que tem**.
+  Quando o par chegava à borda do adversário (e à nossa, r > 0,32), a `BORDA` mandava a v1 dar ré para o centro:
+  largava o empurrão, e o adversário nos levava através do ringue até o nosso lado.
+- **Evidência:** gravação a 10 Hz (`registros/fase4/v1_vs_dodger_a.txt`, 12 rodadas, `tools/fase4_sumo.py`). Na rodada 7,
+  de `rt = 2` a `5` o par andava a +0,06 m/s para a borda do adversário (ele em r = 0,39); em `rt = 5,0` a nossa `BORDA`
+  disparou (r = 0,32) e a velocidade do par **inverteu** para −0,12 m/s até caírmos em `rt = 11,6`. As 3 derrotas da v1
+  foram nesse padrão, todas em rodadas longas (13 a 28 s). As 2 derrotas do teste curto anterior (3 rodadas) eram ruído.
+- **Resultado (antes × depois, contra `sumo_dodger`):** v1 **5V 3D 4E** em 12 rodadas; v2 **31V 0D 0E** em 31 rodadas
+  (`registros/fase4/v2_vs_dodger_a.txt`). Contra `sumo_tech` (nos dois lados): só empates, 0 derrotas, igual à v1.
+  Contra parado (simulador limpo): +10 vitórias em ~64 s nos dois lados, o mesmo ritmo da v1.
+- **Limite:** o `sumo_dodger` é derivado da v1 e **tem o mesmo defeito**; por isso perde para quem não recua em contato. O 31
+  a 0 não prova que a v2 vença o Tech real. Contra quem encara sem esse defeito, o resultado continua sendo empate (H1).
+- **Status:** adotada.
+
+## [rouba-bandeira] O atacante usa o `held` e a imunidade de 1,5 s para ir direto — 23/11/2026
+- **Decisão:** a v2 rastreia o `held` do próprio robô (do `/game/state`). Preso: fica parado. Solto: imune por 1,5 s,
+  vai **direto** no defensor plantado (sem desviar nem girar). Com a bandeira e defensor plantado: foge de ré de frente
+  para ele. Com o defensor longe da bandeira, mantém o desvio por campo repulsivo da v1.
+- **Por quê (observação do usuário na liga):** depois de ser segurado, o atacante da v1 girava (repulsão dos oponentes e
+  detector de travamento) e voltava a ser segurado.
+- **Evidência (v1 × v2 contra a réplica `ctf_tech`):** azul 0 a 0 → **2 a 0** em 100 s; vermelho **2 a 0** em 80 s; 0 pontos
+  sofridos nos dois lados. Contra parado (simulador limpo), azul +5 em 68 s e vermelho com um ponto a cada ~15 s.
+- **Limite:** o `ctf_tech` é réplica minha do relato do briefing, não o Tech real. Uma execução por lado.
+- **Status:** adotada.
+
+## [futebol] Apoio que acompanha o atacante e goleiro que prevê a bola — 23/11/2026
+- **Decisão:** o apoio não espera parado: com a bola no nosso campo (> 0,25 m do centro) cobre o ponto entre a bola e o
+  nosso gol; com a bola no ataque acompanha o atacante, 0,30 m atrás dele e 0,12 m de lado. O goleiro usa a velocidade
+  da bola para ficar onde ela vai cruzar a linha (só se vem para o nosso gol a mais de 0,03 m/s e em até 3 s).
+- **Por quê (observação do usuário na liga):** na v1 o apoio parado era empurrado por um jogador adversário e o goleiro
+  "ia mais ou menos" (só seguia a posição da bola). O Nyx real faz o apoio acompanhar.
+- **Evidência:** contra `soccer_nyx` (nos dois lados) e `soccer_swarm`: **0 a 0** em todos, igual à v1: a mudança não
+  piorou nem sofreu gols, mas **não gerou gols** contra adversários defensivos. Contra parado (simulador limpo): azul
+  5 a 0 e vermelho 4 a 0 em 71 s, ritmo igual ao da v1.
+- **Limite:** a v2 **não foi testada contra o Claude real** (só descrito pelo usuário). O goleiro preditivo e o apoio têm
+  testes offline, mas não há medida isolada do ganho de cada um.
+- **Status:** adotada (ganho no jogo real ainda não medido).
+
+## [método] Teste de partida só vale com o simulador reiniciado — 23/11/2026
+- **Observação:** duas "regressões" apontadas (futebol 0 a 0 e CTF vermelho 0 pontos contra parado) **desapareceram** ao
+  reiniciar o simulador. O time "parado" fica onde o jogo anterior o deixou e pode bloquear a bola ou a bandeira.
+- **Decisão:** os testes contra adversário parado usam simulador reiniciado antes de cada partida.
+- **Status:** adotada.

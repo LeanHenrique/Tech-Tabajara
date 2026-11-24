@@ -172,6 +172,24 @@ Todas as partidas abaixo são **uma execução** de 60 a 120 s no simulador; "pa
 Contra os adversários descritos pela observação da liga (Tech no sumô, Nyx no futebol), a v1 **empata**, o que vale 1
 ponto por partida. [PREENCHER: resultados da liga contra Tech, Nyx e Claude, com prints e data]
 
+## 5b. Versão v2 (Fase 4)
+
+Três correções, cada uma ligada a uma evidência (detalhes em `DECISOES.md`):
+
+| Jogo | Mudança | Antes → depois (uma execução cada, simulador limpo) |
+|---|---|---|
+| Sumô | `BORDA` só sem contato; em contato mantém o empurrão | contra `sumo_dodger`: 5V 3D 4E em 12 rodadas → **31V 0D** em 31; contra `sumo_tech`: empates nos dois lados (igual) |
+| Rouba-bandeira | atacante usa `held` e a imunidade de 1,5 s para ir direto; foge de ré com a bandeira | contra `ctf_tech`: 0 a 0 → **2 a 0** nos dois lados, 0 sofridos |
+| Futebol | apoio acompanha o atacante ou cobre o gol; goleiro prevê onde a bola cruza a linha | contra `soccer_nyx` e `soccer_swarm`: 0 a 0 → 0 a 0 (sem piora nem ganho) |
+
+**Causa das derrotas da v1 no sumô.** Com as forças saturadas e opostas, a força líquida é zero e o par mantém a velocidade
+que tem. Quando o par chegava à borda do adversário, a nossa `BORDA` mandava recuar: largava o empurrão e o adversário nos
+levava até o nosso lado. Foi achado gravando as posições a 10 Hz (12 rodadas) e olhando os 2 s antes de cada queda.
+**Limite:** o `sumo_dodger` tem o mesmo defeito da v1, então o 31 a 0 não prova vitória contra o Tech real.
+
+**Método.** Duas "regressões" que apareceram nos testes (futebol e CTF contra parado) eram contaminação: o time parado fica onde
+o jogo anterior o deixou. Passamos a reiniciar o simulador antes de cada partida de teste.
+
 ## 6. Falhas observadas
 
 - **Futebol, atacante parado para sempre (corrigido).** Em partida real o time vermelho ficou imóvel por 70 s. Causa:
