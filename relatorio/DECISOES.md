@@ -207,3 +207,40 @@ O usuário observou os dois adversários na liga e descreveu o comportamento. Os
   reiniciar o simulador. O time "parado" fica onde o jogo anterior o deixou e pode bloquear a bola ou a bandeira.
 - **Decisão:** os testes contra adversário parado usam simulador reiniciado antes de cada partida.
 - **Status:** adotada.
+
+---
+
+# Fase 4 (continuação): ajustes pedidos pela liga e resultados negativos, 23/11/2026
+
+Observações do usuário na liga depois da v2 estão resumidas em `HANDOFF.md`, Seção 5. Abaixo, o que foi tentado e **não** foi
+para a liga, cada item com a medida.
+
+## [sumô] Observação da liga: duas vitórias por 3 a 0, uma contra o Claude (professor) — 23/11/2026
+- **Evidência:** relato do usuário (duas partidas). Antes da v2, contra o R2D2, o nosso robô já empurrava o adversário para
+  fora várias vezes, mas estávamos em 4º. É coerente com a correção da `BORDA`.
+- **Status:** a v2 do sumô fica como está.
+
+## [rouba-bandeira] Tática do Claude contra defensor ativo: contornar e dar ré até a bandeira — 23/11/2026 — DESCARTADA (por ora)
+- **Decisão:** não enviar. Código em `exercicios/ctf/ctf_v3_contornar.py`.
+- **Por quê tentamos:** observação do usuário: contra o TuoLing (defensor ativo, que cola no atacante) o Claude circula o defensor
+  e, com a bandeira atrás e o defensor à frente, dá ré até ela, pega e desvia para levá-la ao campo dele.
+- **Evidência:** `ctf_sticky` (defensor ativo, réplica minha). v2: **0 a 0** nos dois lados, atacante segurado ~18 vezes.
+  v3: **0 a 0**, ~18 vezes segurado; o log mostra `IR_BANDEIRA -> APROXIMAR -> CONTORNAR -> PRESO` em ~3 s. O defensor
+  persegue à mesma velocidade (0,2 m/s) e alcança o atacante antes de a órbita terminar.
+- **Limite:** o `ctf_sticky` é uma perseguidora perfeita; o TuoLing real provavelmente não é. Pode valer a pena testar contra o
+  código real, se houver como observá-lo.
+- **Status:** descartada.
+
+## [futebol] Condução da bola (atacante persegue a bola) — 23/11/2026 — DESCARTADA
+- **Por quê tentamos:** o R2D2 mostrou o nosso atacante dando "toquinhos" sem velocidade (a regra do chute exige bola a < 22 cm e
+  alinhada; depois da batida a bola corre à frente e o robô volta ao ponto de preparação).
+- **Evidência:** contra parado (simulador limpo): azul **2** gols em 67 s (v2: 5 em 71 s), vermelho 4 (igual). Contra a v2
+  antiga: 0 a 0 nos dois lados (150 s).
+- **Status:** descartada. O problema observado na liga continua em aberto.
+
+## [futebol] Apoio com lado travado e sem ré — 23/11/2026 — NÃO ENVIADO
+- **Por quê tentamos:** o R2D2 mostrou o jogador mais longe da bola "meio louco". Hipótese: perto de 90° o sentido da ré
+  troca a cada ciclo e o lado do apoio alterna com a linha de empurrão.
+- **Evidência:** contra parado (simulador limpo): azul **3** e vermelho **3** gols em ~68 s (v2: 5 e 4).
+- **Status:** não enviado (`exercicios/soccer/soccer_v3_apoio.py`). Sem ganho medido; a hipótese da oscilação nem foi
+  confirmada observando o apoio.
