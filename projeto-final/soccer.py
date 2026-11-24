@@ -370,16 +370,15 @@ class Soccer:
         return best[1]
 
     def push_cmd(self, me, ball, ux, uy):
-        """Mantém o robô atravessando a bola; não reduz a velocidade ao chegar ao alvo."""
-        norm = math.hypot(ux, uy)
-        ux, uy = ux / max(norm, 1e-6), uy / max(norm, 1e-6)
-        desired = math.atan2(uy, ux)
+        """Conduz mantendo a bola à frente, sem parar para recalcular a aproximação."""
+        goal_heading = math.atan2(uy, ux)
+        ball_heading = math.atan2(ball[1] - me[1], ball[0] - me[0])
+        ball_error = wrap_angle(ball_heading - goal_heading)
+        desired = wrap_angle(goal_heading + clamp(1.4 * ball_error, -0.55, 0.55))
         err = wrap_angle(desired - me[2])
         w = clamp(KW * err, -W_MAX, W_MAX)
-        # Com a bola próxima, mantém tração mesmo quando o alvo fica perto por acompanhar a bola.
-        # Se estiver muito de lado/de costas, prioriza recuperar o rumo antes de acelerar.
-        if abs(err) < 0.85:
-            v = V_MAX * max(0.42, math.cos(err))
+        if abs(err) < 0.95:
+            v = V_MAX * max(0.70, math.cos(err))
         else:
             v = V_MAX * max(0.0, math.cos(err))
         return v, w
@@ -408,6 +407,10 @@ class Soccer:
             v, w, _ = go_to(me, self.orbit_point(me, ball, ux, uy), d_slow=0.04, reverse=True)
             return v, w
         err = wrap_angle(math.atan2(ball[1] - me[1], ball[0] - me[0]) - me[2])
+        # Depois do primeiro contato, não volte ao ponto de preparação: a bola sempre
+        # fica um pouco à frente e o atacante deve segui-la empurrando continuamente.
+        if along < -0.025 and math.hypot(rx, ry) < 0.28:
+            return self.push_cmd(me, ball, ux, uy)
         if abs(lateral) < ALIGN_LAT + 0.03 and abs(err) < ALIGN_ERR and math.hypot(rx, ry) < 0.22:
             return self.push_cmd(me, ball, ux, uy)
         prep = in_field((ball[0] - PREP * ux, ball[1] - PREP * uy))
@@ -417,7 +420,8 @@ class Soccer:
             # estar em cima do alvo, e o robô ficaria parado para sempre.
             if abs(err) < ALIGN_ERR:  # já encara a bola: chuta mesmo com o desvio lateral
                 return self.push_cmd(me, ball, ux, uy)
-            return 0.0, clamp(KW * err, -W_MAX, W_MAX)  # senão gira no lugar para encarar a bola
+            # Avança devagar enquanto corrige o rumo; não gira parado ao lado da bola.
+            return 0.35 * V_MAX * max(0.0, math.cos(err)), clamp(KW * err, -W_MAX, W_MAX)
         v, w, _ = go_to(me, prep, d_slow=0.04, reverse=True)
         return v, w
 
@@ -425,14 +429,16 @@ class Soccer:
         """striker_cmd com rede de segurança: parado sem motivo por IDLE_S -> vai direto na bola por 0,8 s."""
         now = rospy.get_time()
         if now < self.unstick_until:
-            v, w, _ = go_to(me, ball, d_slow=1e-3)
-            return v, w
+            ux, uy = self.push_dir(ball)
+            return self.push_cmd(me, ball, ux, uy)
         if self.safe_active:
             rospy.loginfo("[SEGURANCA] atacante hero_%d saiu do movimento direto | eu=(%.2f, %.2f) | bola=(%.2f, %.2f)" %
                            (self.striker, me[0], me[1], ball[0], ball[1]))
             self.safe_active = False
         v, w = self.striker_cmd(me, ball)
-        if abs(v) < 0.02 and abs(w) < 0.3:
+        if abs(v) < 0.08:
+            ux, uy = self.push_dir(ball)
+            return self.push_cmd(me, ball, ux, uy)
             if self.idle_since is None:
                 self.idle_since = now
             elif now - self.idle_since > IDLE_S:
@@ -507,6 +513,11 @@ class Soccer:
                         # A recuperação genérica dá ré e gira; isso pode tirar o goleiro da linha.
                         # O goleiro permanece sob controle exclusivo de keeper().
                         if i == self.ids[0]:
+                            self.stuck[i].reset()
+                            self.stuck_active.discard(i)
+                            rec = None
+                        elif i == self.striker:
+                            # A ré automática interrompe a condução ao pressionar a bola.
                             self.stuck[i].reset()
                             self.stuck_active.discard(i)
                             rec = None
