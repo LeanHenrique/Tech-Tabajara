@@ -34,6 +34,7 @@ Repositório destinado ao desenvolvimento, documentação e armazenamento dos ar
 | `tools/lockstep.py`, `tools/planos/`, `tools/render.py` | driver das partidas, planos de cada série e gerador dos vídeos |
 | `tools/sync.sh`, `tests/` | cópia de `exercicios/` para `projeto-final/` com o verificador do professor; testes offline |
 | `relatorio/DECISOES.md` | cada decisão de estratégia com a evidência, inclusive as descartadas |
+| `relatorio.pdf`, `relatorio/fonte/` | relatório final e a fonte dele (HTML e figuras; o PDF sai com `chromium --headless --no-pdf-header-footer --print-to-pdf=relatorio.pdf relatorio/fonte/relatorio.html`) |
 | `Trabalho Prático 5/` | o kit de simulação (simulador Genesis, ponte ROS e `run.sh`) |
 
 ### Rodar um jogo no kit (com ROS, como no torneio)

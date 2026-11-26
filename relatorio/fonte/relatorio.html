@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Projeto final: sumô, rouba-bandeira e futebol (RTech Tabajara)</title>
+<!-- Fonte do relatorio.pdf. Para gerar o PDF:
+     chromium --headless --no-pdf-header-footer --print-to-pdf=relatorio.pdf relatorio/fonte/relatorio.html -->
+<style>
+@page { size: A4; margin: 22mm 20mm 20mm; @bottom-center { content: counter(page); } }
+body { font: 10.5pt/1.5 "Noto Serif", "DejaVu Serif", serif; color: #111; margin: 0; text-align: justify; hyphens: auto; }
+h1 { font-size: 19pt; text-align: center; margin: 0 0 4px; font-weight: 700; }
+.sub { text-align: center; margin: 0 0 14px; }
+.authors { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 34px; margin: 8px 0; }
+h2 { font-size: 14pt; margin: 22px 0 6px; break-after: avoid; }
+h3 { font-size: 11.5pt; margin: 14px 0 4px; break-after: avoid; }
+p { margin: 5px 0; }
+ul, ol { margin: 4px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+code { font: 9pt "DejaVu Sans Mono", monospace; }
+pre { font: 8.6pt/1.45 "DejaVu Sans Mono", monospace; background: #f3f3f3; padding: 7px 10px; white-space: pre-wrap; text-align: left; break-inside: avoid; }
+table { border-collapse: collapse; margin: 6px auto 10px; font-size: 9pt; text-align: left; break-inside: avoid; }
+caption { caption-side: top; font-size: 9.5pt; margin-bottom: 4px; text-align: center; }
+th { border-top: 1.2px solid #000; border-bottom: 0.8px solid #000; padding: 3px 8px; font-weight: 700; }
+td { padding: 2.5px 8px; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 1.2px solid #000; }
+td.n, th.n { text-align: right; }
+figure { margin: 10px 0; text-align: center; break-inside: avoid; }
+figure img { max-width: 100%; }
+figcaption { font-size: 9.5pt; margin-top: 4px; }
+.eq { display: flex; justify-content: center; align-items: center; margin: 6px 0; }
+.eq .f { flex: 1; text-align: center; font-style: italic; }
+.eq .k { width: 30px; text-align: right; }
+.page { break-before: page; }
+</style>
+</head>
+<body>
+
+<h1>Projeto final: sumô, rouba-bandeira e futebol</h1>
+<p class="sub">Equipe RTech Tabajara</p>
+<div class="authors">
+  <span>Lean Henrique Pereira Miranda</span><span>Guilherme Novais de Souza</span><span>Marcus Oliveira</span>
+  <span>Luis Eduardo</span><span>Hector Julio Pardinho Soares</span>
+</div>
+<p class="sub">Projeto de Sistemas Robóticos (DCC/UFMG), 2º semestre de 2026. Prof. Paulo Rezeck<br>26 de novembro de 2026</p>
+
+<p>Repositório: <code>https://github.com/LeanHenrique/Tech-Tabajara</code>. Versão do torneio: tag <code>torneio</code>
+(commit <code>c75ca60</code>, 25/11/2026), pasta <code>projeto-final/</code>. Registros, vídeos e ferramentas das partidas
+deste relatório: commit <code>773216c</code>.</p>
+
+<table>
+<caption>Tabela 1: Versões entregues e versões anteriores usadas nas comparações.</caption>
+<thead><tr><th>Jogo</th><th>Arquivo do torneio</th><th>Versão</th><th>Versão anterior</th></tr></thead>
+<tbody>
+<tr><td>Sumô</td><td><code>projeto-final/sumo.py</code></td><td>v4 (âncora no centro)</td><td><code>exercicios/sumo/sumo_v2.py</code></td></tr>
+<tr><td>Rouba-bandeira</td><td><code>projeto-final/ctf.py</code></td><td>v3 (defesa ativa e ciclo de imunidade)</td><td><code>exercicios/ctf/ctf_v2.py</code></td></tr>
+<tr><td>Futebol</td><td><code>projeto-final/soccer.py</code></td><td>final (condução contínua, goleiro e lateral)</td><td><code>exercicios/soccer/soccer_v2.py</code></td></tr>
+</tbody>
+</table>
+
+<h2>1&nbsp;&nbsp;Introdução e método</h2>
+<p>As três versões finais rodaram 30 séries de teste no simulador, cerca de 3 h de jogo, nos dois lados, sem nenhuma
+exceção nem travamento. Contra adversário parado, venceram todas as rodadas e partidas. Contra a versão anterior, o
+rouba-bandeira venceu as 6 partidas (29×0) e o futebol venceu 5 e empatou 1 (21×0). O sumô empatou as 40 rodadas
+(Seções 3 a 5).</p>
+<p>Cada jogo é um arquivo autossuficiente (<code>sumo.py</code>, <code>ctf.py</code>, <code>soccer.py</code>) que roda como nó ROS
+no simulador do kit. Seguimos o ciclo da disciplina: medir antes de construir, registrar cada decisão com a evidência e
+documentar o que não funcionou.</p>
+<ol>
+<li><b>Ler o juiz e a física do simulador</b> (<code>world.py</code>, <code>scenarios/*.py</code>) para saber as regras exatas.
+Por exemplo: a força de cada robô é limitada a 0,20 N <b>por eixo do mundo</b>, e no CTF o raio de segurar (0,10 m) é
+maior que o de pegar a bandeira (0,07 m).</li>
+<li><b>Medir</b> o que sustenta as decisões de sumô: frenagem, empurrão frontal e lateral, inclinação (Seção 6).</li>
+<li><b>Robustez primeiro.</b> A nota da competição avalia se os códigos funcionam. Os nós publicam (0, 0) desde o
+primeiro ciclo, nunca morrem por exceção e detectam reinício de rodada; os robôs que podem enroscar têm detector de
+travamento.</li>
+<li><b>Versões congeladas</b> (<code>*_v1.py</code>, <code>*_v2.py</code> em <code>exercicios/&lt;jogo&gt;/</code>) para comparar e
+para voltar atrás se uma mudança piorasse.</li>
+<li><b>Sparrings</b>: réplicas que fizemos a partir do comportamento observado na liga (<code>sumo_tech</code>,
+<code>sumo_dodger</code>, <code>ctf_tech</code>, <code>ctf_sticky</code>, <code>soccer_nyx</code> etc.). Não são o código real dos
+adversários.</li>
+</ol>
+<p><b>Protocolo das partidas deste relatório (26/11/2026).</b> Os resultados das Seções 3 a 5 vêm do simulador do kit
+(<code>psr_sim</code>, mesma física e mesmo juiz), com os arquivos dos jogos sem alteração. Para rodar as partidas
+acelerado, usamos um driver em <i>lockstep</i> (<code>tools/lockstep.py</code>): ele troca o ROS e a ponte por um barramento
+em processo com relógio simulado. A ponte republica o estado a 25 Hz, como o <code>hero_bridge.py</code>, e cada nó roda no
+seu <code>rospy.Rate</code> (20 Hz), com uma fase própria. Os planos de cada série estão em <code>tools/planos/</code>.</p>
+<ul>
+<li><b>Sumô:</b> 20 rodadas por confronto, nos dois lados.</li>
+<li><b>Rouba-bandeira e futebol:</b> 3 partidas de 5 min por confronto, nos dois lados.</li>
+<li><b>Adversários:</b> parado (sem nó) e a versão anterior (v2); no sumô, também o sparring <code>sumo_tech</code>.</li>
+<li><b>Diferenças para a máquina do torneio:</b> não há latência de rede nem variação do escalonador, e as sementes são
+fixas (uma por partida). Por isso cada placar é uma amostra, não uma taxa.</li>
+</ul>
+
+<h2>2&nbsp;&nbsp;Interface comum e controlador base</h2>
+<p>Os três arquivos seguem as regras da Seção 3 do enunciado. Usam só biblioteca padrão, <code>numpy</code>, <code>rospy</code>,
+mensagens do ROS e <code>psr_hero.utils</code>, e não leem nem gravam arquivos. O lado vem dos parâmetros do nó
+(<code>~robot</code>, <code>~opponent</code>, <code>~team</code>, <code>~role</code>, <code>~opponents</code>), sem cor, id ou sinal de
+<i>x</i> fixos no código. Cada nó publica só no <code>cmd_vel</code> do próprio time, e o verificador do professor
+(<code>projeto-final/verificar.py</code>) passa nos três.</p>
+<p>O robô é diferencial, com |<i>v</i>| ≤ 0,20 m/s e |<i>ω</i>| ≤ 4 rad/s, e para se ficar 0,5 s sem comando. Todos os
+comportamentos usam o mesmo controlador “ir até um ponto” (<code>go_to</code>), copiado em cada arquivo:</p>
+<div class="eq"><span class="f">e<sub>θ</sub> = wrap( atan2(y<sub>a</sub> − y, x<sub>a</sub> − x) − ψ ),</span><span class="k">(1)</span></div>
+<div class="eq"><span class="f">ω = sat<sub>±4</sub>( K<sub>ω</sub> e<sub>θ</sub> ),</span><span class="k">(2)</span></div>
+<div class="eq"><span class="f">v = v<sub>max</sub> · max(0, cos e<sub>θ</sub>) · min(1, d / d<sub>slow</sub>).</span><span class="k">(3)</span></div>
+<p>Com ré habilitada e |<i>e<sub>θ</sub></i>| &gt; 90°, o controlador inverte o heading-alvo e usa <i>v</i> &lt; 0, para não
+dar meia-volta. O termo cos <i>e<sub>θ</sub></i> faz o robô girar no lugar quando o alvo está de lado. O termo
+<i>d</i>/<i>d<sub>slow</sub></i> freia linearmente perto do alvo; com <i>d<sub>slow</sub></i> ≈ 0 o robô chega ao alvo em
+velocidade máxima, o que usamos para empurrar.</p>
+<table>
+<caption>Tabela 2: Ganhos e parâmetros do controlador base.</caption>
+<thead><tr><th>Ganho ou parâmetro</th><th>Sumô</th><th>Rouba-bandeira</th><th>Futebol</th></tr></thead>
+<tbody>
+<tr><td><i>K<sub>ω</sub></i> (giro)</td><td>5,0</td><td>5,0</td><td>5,2 (goleiro: 4,5)</td></tr>
+<tr><td><i>v<sub>max</sub></i></td><td>0,20 m/s</td><td>0,20 m/s</td><td>0,20 m/s</td></tr>
+<tr><td><i>d<sub>slow</sub></i> padrão</td><td>0,05 m (empurrão: ≈ 0)</td><td>0,05 m (perseguição: 0,001 m)</td><td>0,03 a 0,04 m</td></tr>
+<tr><td>Frequência do laço</td><td>20 Hz</td><td>20 Hz</td><td>20 Hz</td></tr>
+</tbody>
+</table>
+<p>O rouba-bandeira acrescenta um <b>campo repulsivo</b> (<code>steer</code>): o alvo vira a soma do vetor unitário para o
+objetivo com uma repulsão de cada oponente a menos de <i>R<sub>rep</sub></i>. A repulsão tem módulo
+<i>G</i>(<i>R<sub>rep</sub></i> − <i>d</i>)/<i>R<sub>rep</sub></i>, com <i>R<sub>rep</sub></i> = 0,22 m e <i>G</i> = 2,0. O
+resultado passa pelo <code>go_to</code> a 0,2 m à frente.</p>
+<p>Robôs que podem enroscar (atacante do CTF e jogadores de linha do futebol) têm um <b>detector de travamento</b>. Comando
+alto com o robô parado por <i>T<sub>stuck</sub></i> (1,5 s no CTF, 1,3 s no futebol) dispara uma ré curta (0,4 s e
+0,35 s) com giro.</p>
+
+<h2>3&nbsp;&nbsp;Sumô</h2>
+<p>A v4 venceu 40 de 40 rodadas contra o robô parado, 20 em cada lado, em cerca de 3,8 s por rodada. Contra a v2 empatou
+as 40 por tempo: as duas empurram de frente e as forças saturadas se anulam.</p>
+
+<h3>3.1&nbsp;&nbsp;Estratégia</h3>
+<p>É um robô só. A ideia é <b>encarar o adversário e empurrar de frente na velocidade máxima, com a borda tratada antes de
+tudo</b>. A borda só vale fora de contato: em contato o robô nunca recua. Essa foi a correção da v1 para a v2. Recuar em
+contato tira o nosso empurrão, e o adversário nos leva para fora.</p>
+<p>A v4 acrescenta um <b>modo de âncora</b>, pensado para o R2D2 da liga, que circula de ré. Se o adversário anda de ré fora
+de contato por 1,2 s acumulados, o robô passa a segurar o centro do ringue. De lá, gira alinhado com o adversário e só
+contra-carrega quando ele chega perto, para chegar ao impacto com velocidade. Assim não o persegue até a borda.</p>
+<figure><img src="figuras/fig1_sumo.png" style="width:85%"><figcaption>Figura 1: Sumô v4: máquina de estados (um robô).</figcaption></figure>
+<p>A cada ciclo de 20 Hz o nó escolhe o estado (Figura 1); um início de rodada (o <code>round_time</code> volta a zero)
+devolve o robô a ENGAJAR. A âncora, uma vez ativada, vale até o fim do processo, porque o adversário é o mesmo.</p>
+
+<h3>3.2&nbsp;&nbsp;Controlador e ganhos</h3>
+<p>Todos os estados usam o <code>go_to</code> da Seção 2 com <i>K<sub>ω</sub></i> = 5. Em ENGAJAR e na contra-carga o alvo é a
+posição atual do adversário, com <i>d<sub>slow</sub></i> ≈ 0, para chegar ao contato sem desacelerar. Em BORDA o alvo é o
+centro do ringue, com ré habilitada, para não virar as costas ao adversário. As constantes estão na Tabela 3.</p>
+<table>
+<caption>Tabela 3: Constantes do sumô.</caption>
+<thead><tr><th>Constante</th><th>Valor</th><th>Para quê e de onde vem</th></tr></thead>
+<tbody>
+<tr><td><code>KW</code></td><td>5,0</td><td>ganho de giro do <code>go_to</code></td></tr>
+<tr><td><i>d<sub>slow</sub></i> no empurrão</td><td>≈ 0</td><td>chega ao contato sem desacelerar</td></tr>
+<tr><td><code>R_SAFE</code></td><td>0,32 m</td><td>a frenagem a 0,2 m/s gasta 3,8 cm (E3) e a queda é com o centro além de 0,40 m</td></tr>
+<tr><td>Histerese da BORDA</td><td>0,04 m</td><td>sai da BORDA abaixo de 0,28 m; evita oscilar</td></tr>
+<tr><td><code>CONTACT_DIST</code></td><td>0,10 m</td><td>entre centros (dois raios = 0,074 m); em contato não recua</td></tr>
+<tr><td><code>RE_MIN</code>, <code>RE_ATIVA</code>, <code>RE_ESQUECE</code></td><td>0,08 m/s; 1,2 s; 0,5 s/s</td><td>ré do adversário que conta, tempo para ativar a âncora, esquecimento</td></tr>
+<tr><td><code>R_ANCORA</code>, <code>CARGA_PERTO</code>, <code>CARGA_DIST</code>, <code>CARGA_RMAX</code></td><td>0,06; 0,14; 0,22; 0,20 m</td><td>raios da âncora e da contra-carga</td></tr>
+</tbody>
+</table>
+
+<h3>3.3&nbsp;&nbsp;Resultados</h3>
+<table>
+<caption>Tabela 4: Sumô v4: 20 rodadas por confronto.</caption>
+<thead><tr><th>Confronto</th><th>Nosso lado</th><th class="n">Rodadas</th><th class="n">Vitórias</th><th class="n">Empates</th><th class="n">Derrotas</th><th>Observação</th></tr></thead>
+<tbody>
+<tr><td>v4 × parado</td><td><code>hero_0</code></td><td class="n">20</td><td class="n">20</td><td class="n">0</td><td class="n">0</td><td>cada vitória em ≈ 3,8 s</td></tr>
+<tr><td>v4 × parado</td><td><code>hero_1</code></td><td class="n">20</td><td class="n">20</td><td class="n">0</td><td class="n">0</td><td>idem</td></tr>
+<tr><td>v4 × v2</td><td><code>hero_0</code></td><td class="n">20</td><td class="n">0</td><td class="n">20</td><td class="n">0</td><td>todos por tempo (40 s)</td></tr>
+<tr><td>v4 × v2</td><td><code>hero_1</code></td><td class="n">20</td><td class="n">0</td><td class="n">20</td><td class="n">0</td><td>todos por tempo (40 s)</td></tr>
+<tr><td>v4 × <code>sumo_tech</code></td><td><code>hero_0</code></td><td class="n">20</td><td class="n">0</td><td class="n">20</td><td class="n">0</td><td>todos por tempo (40 s)</td></tr>
+<tr><td>v4 × <code>sumo_tech</code></td><td><code>hero_1</code></td><td class="n">20</td><td class="n">0</td><td class="n">20</td><td class="n">0</td><td>todos por tempo (40 s)</td></tr>
+</tbody>
+</table>
+<p>Nos empates com a v2, os robôs ficaram em contato 98% do tempo e nenhum se afastou mais de 0,19 m do centro (posições
+gravadas a 10 Hz). É o equilíbrio previsto: duas forças de 0,20 N opostas somam zero e o par fica parado (Seção 6, E1 e
+E2). A âncora não foi ativada em nenhuma série, porque nenhum dos adversários anda de ré. Contra o sparring
+<code>sumo_tech</code>, nossa réplica do líder da liga, foram 20 empates em 20 rodadas em cada lado, também com 98% do tempo
+em contato. Os registros estão em <code>exercicios/registros/final/</code>.</p>
+
+<h3>3.4&nbsp;&nbsp;Falhas observadas</h3>
+<ul>
+<li><b>Contra quem também empurra de frente, empata.</b> Foram 40 empates em 40 contra a v2 e 40 em 40 contra o
+<code>sumo_tech</code>. Não temos uma tática medida que vença esse adversário. Inclinar o heading não ajudou (E2: 10 empates
+em 10 com <i>ϕ</i> = 35°).</li>
+<li><b>A v1 perdia ao recuar em contato</b> (corrigido na v2). Contra o sparring <code>sumo_dodger</code>, a v1 fez 5
+vitórias, 3 derrotas e 4 empates em 12 rodadas. A v2 fez 31 vitórias e 0 derrotas em 31. Foi uma execução de cada, em
+23/11. O <code>dodger</code> tem o mesmo defeito da v1, então isso não prova vitória contra adversários reais.</li>
+<li><b>A âncora não foi validada contra o R2D2 real.</b> Ela depende de reconhecer a ré do adversário. Um adversário que
+recue fora de contato por outro motivo também a ativa, e daí em diante o nosso robô deixa de atacar.</li>
+<li><b>Margem de borda pequena.</b> Entre 0,32 m e 0,40 m sobram 8 cm para 3,8 cm de frenagem. Com a latência real da
+rede, a folga diminui.</li>
+</ul>
+
+<h2>4&nbsp;&nbsp;Rouba-bandeira</h2>
+<h3>4.1&nbsp;&nbsp;Papéis e estratégia</h3>
+<p>Cada time tem um <b>defensor</b> e um <b>atacante</b>, um processo por robô, com o papel no parâmetro <code>~role</code>. O
+jogo se decide pelo ciclo de prisão do juiz. Na própria metade, tocar um invasor (&lt; 0,10 m) o segura por 4 s. Depois
+ele fica imune por 1,5 s, e o raio de pegar a bandeira é 0,07 m. Os dois robôs leem o <code>held</code> do
+<code>/game/state</code>, no relógio do próprio jogo, para saber quem está preso e até quando cada um fica imune.</p>
+<ul>
+<li><b>Defensor ativo.</b> A v1 e a v2 plantavam o defensor sobre a bandeira. A v3 <b>espera entre a bandeira e o meio e
+intercepta logo depois do meio</b>. Solto, o invasor tem só 1,5 s de imunidade (cerca de 0,3 m) e não alcança a bandeira
+antes de ser preso de novo. Com o invasor preso, o defensor o <b>empurra para o canto lateral</b>. Preso, o robô só
+resiste com força proporcional à velocidade e anda cerca de 0,1 m/s quando empurrado.</li>
+<li><b>Atacante que usa a imunidade.</b> Sem defensor perto da bandeira, vai direto, desviando com o campo repulsivo. Com
+um defensor perto, contorna; com o defensor em cima, encosta nele de propósito. Aí é preso, sai imune e, imune, vai reto
+à bandeira (FURAR). Cada ciclo avança cerca de 0,3 m, em vez de ficar prensado na parede.</li>
+<li><b>Brecha do juiz que a v3 usa e evita.</b> Pegar a bandeira não exige estar solto. Um portador preso a menos de
+0,07 m da base inimiga pega a bandeira de novo e sai dos 4 s carregando e imune. Por isso o nosso atacante ANCORA sobre a
+base inimiga quando o defensor cola nele. E o nosso defensor nunca empurra um portador preso em direção ao meio, que era
+o erro da v2.</li>
+</ul>
+<p>Cada robô assume o primeiro estado da lista cuja condição vale (Figura 2). Não há memória de estado além do detector
+de travamento e dos tempos de prisão e imunidade.</p>
+<figure><img src="figuras/fig2_ctf.png" style="width:56%"><figcaption>Figura 2: Rouba-bandeira v3: estados do defensor e do atacante, por prioridade.</figcaption></figure>
+
+<h3>4.2&nbsp;&nbsp;Controladores e ganhos</h3>
+<p>Os dois papéis usam o <code>go_to</code> com <i>K<sub>ω</sub></i> = 5. O atacante passa pelo campo repulsivo (Seção 2) em
+IR_BANDEIRA, VOLTAR e CONTORNAR, e vai direto, sem repulsão, em FURAR. O defensor persegue e intercepta com
+<i>d<sub>slow</sub></i> = 0,001 m, para chegar ao toque sem frear. As constantes estão na Tabela 5.</p>
+<table>
+<caption>Tabela 5: Constantes do rouba-bandeira.</caption>
+<thead><tr><th>Constante</th><th>Valor</th><th>Para quê</th></tr></thead>
+<tbody>
+<tr><td><code>KW</code></td><td>5,0</td><td>ganho de giro do <code>go_to</code></td></tr>
+<tr><td><code>R_REP</code>, <code>REP_GAIN</code></td><td>0,22 m; 2,0</td><td>campo repulsivo dos oponentes (maior que o raio de segurar, 0,10 m)</td></tr>
+<tr><td><code>T_STUCK</code>, <code>STUCK_BACK</code></td><td>1,5 s; 0,4 s</td><td>detector de travamento: ré curta com giro</td></tr>
+<tr><td><code>PRONTO_AVANCO</code>, <code>PRONTO_Y</code></td><td>0,20 m; 0,5</td><td>espera do defensor à frente da bandeira, seguindo metade do <i>y</i> da ameaça</td></tr>
+<tr><td><code>MEIO_MARGEM</code></td><td>0,03 m</td><td>o defensor não passa do meio</td></tr>
+<tr><td><code>DEPOSITO_X</code>, <code>DEPOSITO_Y</code></td><td>0,45 m; 0,55 m</td><td>canto para onde o invasor preso é empurrado</td></tr>
+<tr><td><code>LADO_ANTES</code></td><td>1,0 s</td><td>antes de o invasor ser solto, o defensor para de empurrar e bloqueia</td></tr>
+<tr><td><code>PLANTADO_DIST</code>, <code>SOBRE_BANDEIRA</code></td><td>0,20 m; 0,05 m</td><td>defensor inimigo “guardando” e “em cima” da bandeira</td></tr>
+<tr><td><code>CONTORNO_R</code>, <code>FURAR_LADO</code></td><td>0,14 m; 0,06 m</td><td>contorno do defensor; desvio da mira quando imune</td></tr>
+<tr><td><code>AJUDA_RAIO</code></td><td>0,15 m</td><td>o atacante segura um invasor perto dele na nossa metade</td></tr>
+<tr><td><code>ANCORA_PERTO</code>, <code>ANCORA_RAIO</code>, <code>ANCORA_TOL</code></td><td>0,13; 0,12; 0,04 m</td><td>condições e tolerância da âncora sobre a base inimiga</td></tr>
+<tr><td><code>FLAG_MOVED</code></td><td>0,05 m</td><td>nossa bandeira a mais disso da base = foi levada</td></tr>
+</tbody>
+</table>
+
+<h3>4.3&nbsp;&nbsp;Resultados</h3>
+<p>A v3 não sofreu ponto em nenhuma das 12 partidas de 5 min. Contra o time parado, fez 22 pontos em cada partida, nos
+dois lados. Contra a v2, venceu as 6, por 29×0 no total (12 como azul e 17 como vermelho).</p>
+<table>
+<caption>Tabela 6: Rouba-bandeira v3: placar das partidas de 5 min.</caption>
+<thead><tr><th>Confronto</th><th>Nosso lado</th><th class="n">Partida 1</th><th class="n">Partida 2</th><th class="n">Partida 3</th><th class="n">Total (pró × contra)</th></tr></thead>
+<tbody>
+<tr><td>v3 × parado</td><td>azul</td><td class="n">22×0</td><td class="n">22×0</td><td class="n">22×0</td><td class="n">66×0</td></tr>
+<tr><td>v3 × parado</td><td>vermelho</td><td class="n">22×0</td><td class="n">22×0</td><td class="n">22×0</td><td class="n">66×0</td></tr>
+<tr><td>v3 × v2</td><td>azul</td><td class="n">3×0</td><td class="n">3×0</td><td class="n">6×0</td><td class="n">12×0</td></tr>
+<tr><td>v3 × v2</td><td>vermelho</td><td class="n">7×0</td><td class="n">6×0</td><td class="n">4×0</td><td class="n">17×0</td></tr>
+</tbody>
+</table>
+<p>O atacante da v2 foi preso de 48 a 51 vezes por partida e nunca pontuou: a defesa ativa interceptou as tentativas
+antes de virarem ponto. Do nosso lado, o atacante foi preso de 38 a 45 vezes, mas o ciclo preso, imune, FURAR e a âncora
+sobre a base inimiga renderam os pontos. Na partida 3 como azul, por exemplo, o atacante entrou em FURAR 26 vezes e em
+ANCORAR 18 vezes, e marcou 6.</p>
+<table>
+<caption>Tabela 7: Prisões nas partidas contra a v2.</caption>
+<thead><tr><th>Confronto (lado da v3)</th><th>Nosso defensor prendeu o atacante da v2</th><th>Nosso atacante foi preso</th></tr></thead>
+<tbody>
+<tr><td>v3 azul × v2 (3 partidas)</td><td>50, 51, 48</td><td>45, 44, 41</td></tr>
+<tr><td>v3 vermelho × v2 (3 partidas)</td><td>48, 48, 48</td><td>38, 40, 43</td></tr>
+</tbody>
+</table>
+<p>Contra o time parado, as três partidas de cada lado deram o mesmo placar (22×0): sem adversário, o atacante repete o
+mesmo ciclo de ida e volta. Contra a v2, cada partida teve semente e fase
+próprias, e os placares variaram de 3 a 7 pontos.</p>
+
+<h3>4.4&nbsp;&nbsp;Falhas observadas</h3>
+<ul>
+<li><b>Muito tempo sem ponto contra a v2.</b> Cada ponto custou de 5 a 15 prisões do nosso atacante (130 prisões para 12
+pontos como azul e 121 para 17 como vermelho). Na partida 1 como azul, o primeiro ponto só saiu aos 157 s; na partida 3
+como vermelho, não houve ponto entre 41 s e 154 s. Nesse trecho o atacante foi preso 17 vezes; pegou a bandeira e
+entrou em VOLTAR 5 vezes e em ANCORAR 7, mas foi preso de novo antes de chegar à base e a bandeira voltou.</li>
+<li><b>Mais pontos como vermelho (17 contra 12).</b> Como o jogo é simétrico, a hipótese é que a diferença venha do
+encadeamento das prisões a partir da posição de início, e não do lado. Não testamos essa hipótese.</li>
+<li><b>Histórico.</b> A v1 não furava um defensor plantado: 0×0 contra o sparring <code>ctf_camper</code>, em 23/11. A v2
+passou a usar a imunidade e fez 2×0 contra o <code>ctf_tech</code> nos dois lados. A tática de contornar o defensor ativo
+(<code>ctf_v3_contornar.py</code>) deu 0×0 contra o <code>ctf_sticky</code> e não foi para a liga. A v3 final reaproveitou a
+ideia só para o caso em que o defensor não está em cima da bandeira (CONTORNAR).</li>
+</ul>
+
+<h2>5&nbsp;&nbsp;Futebol</h2>
+<h3>5.1&nbsp;&nbsp;Papéis e estratégia</h3>
+<p>Um único nó controla os três robôs do time, e o lado vem de <code>~team</code>. O primeiro robô do time é sempre o
+<b>goleiro</b>. Os dois jogadores de linha alternam entre <b>atacante</b> e <b>apoio</b>: atacante é quem chega antes à bola
+pelo lado certo. A troca tem histerese, para não oscilar quando os dois estão à mesma distância.</p>
+<ul>
+<li><b>Goleiro.</b> Fica na linha de fundo e segue o ponto onde a bola vai cruzar a linha, previsto com a velocidade dela
+até 2,5 s à frente. Com a bola na lateral do nosso campo, fecha a trave do lado dela. Se a bola entra fundo e pelo meio
+da área, sai e a empurra para fora, pelo lado.</li>
+<li><b>Atacante.</b> Contorna a bola até ficar atrás dela na direção do gol e a <b>conduz sem frear</b>. A direção de
+condução mistura “para a frente” (na defesa) e “para o gol” (no ataque). Perto da parede lateral, alinha-se exatamente
+atrás da bola e anda só no eixo <i>x</i>, para não perdê-la contra a parede.</li>
+<li><b>Apoio.</b> Na defesa, forma uma segunda linha entre a bola e o nosso gol. No ataque, acompanha 0,18 m atrás da bola
+para pegar a sobra. Com a bola presa no canto, espera recuado, porque o juiz recoloca a bola no centro depois do gol.</li>
+</ul>
+<p>O atacante é escolhido pelo menor tempo estimado até a bola (Figura 3):</p>
+<div class="eq"><span class="f">ETA = d / v<sub>max</sub> + |e<sub>θ</sub>| / ω<sub>max</sub> + 0,65 s se estiver do lado errado da bola.</span><span class="k">(4)</span></div>
+<figure><img src="figuras/fig3_futebol.png" style="width:66%"><figcaption>Figura 3: Futebol: atribuição de papéis e comportamento de cada papel, por prioridade.</figcaption></figure>
+<p>A versão final veio de muitas iterações pequenas, de 24 e 25/11: goleiro que fecha a trave, condução contínua, segunda
+bola e bola na lateral. A v2 tinha condução por “chutes” (prepara, alinha, chuta), goleiro preso à linha (só previa o
+cruzamento, sem sair) e apoio que seguia o atacante.</p>
+
+<h3>5.2&nbsp;&nbsp;Controladores e ganhos</h3>
+<p>Os jogadores de linha usam o <code>go_to</code> com <i>K<sub>ω</sub></i> = 5,2 e o goleiro com 4,5, sempre com ré
+habilitada. Na condução o atacante não usa o <code>go_to</code>: mira 0,08 m à frente da bola e mantém
+<i>v</i> = <i>v<sub>max</sub></i> max(0,65; cos <i>e</i>) enquanto o erro de rumo for menor que 0,9 rad, para não frear nas
+correções de ângulo. As constantes estão na Tabela 8.</p>
+<table>
+<caption>Tabela 8: Constantes do futebol.</caption>
+<thead><tr><th>Constante</th><th>Valor</th><th>Para quê</th></tr></thead>
+<tbody>
+<tr><td><code>KW</code> (linha / goleiro)</td><td>5,2 / 4,5</td><td>ganho de giro do <code>go_to</code></td></tr>
+<tr><td>Condução (<code>push_cmd</code>)</td><td>mira 0,08 m à frente; <i>v</i> = <i>v<sub>max</sub></i> max(0,65; cos <i>e</i>) se |<i>e</i>| &lt; 0,9 rad</td><td>empurra a bola sem frear nas correções de ângulo</td></tr>
+<tr><td><code>PREP</code>, <code>R_ORB</code>, <code>ORB_STEP</code></td><td>0,11 m; 0,15 m; 0,85 rad</td><td>ponto de preparação atrás da bola e passo da órbita</td></tr>
+<tr><td><code>ALIGN_ERR</code>, <code>ALIGN_LAT</code></td><td>0,42 rad; 0,07 m</td><td>tolerâncias para começar a conduzir</td></tr>
+<tr><td><code>DRIBBLE_KEEP_DIST</code>, <code>_LAT</code>, <code>_ERR</code></td><td>0,35 m; 0,15 m; 0,85 rad</td><td>tolerâncias para continuar conduzindo</td></tr>
+<tr><td><code>SIDELINE_ZONE</code>, <code>WALL_STICK_Y</code></td><td>0,12 m; 0,555 m</td><td>faixa da lateral e linha em que o robô encosta na parede</td></tr>
+<tr><td><code>SWITCH_ETA_MARGIN</code>, <code>SWITCH_HOLD_TIME</code></td><td>0,28 s (+0,35 s conduzindo); 0,20 s</td><td>histerese da troca de atacante</td></tr>
+<tr><td><code>KEEPER_LINE_X</code>, <code>KEEPER_SWEEP_X</code>, <code>KEEPER_Y</code></td><td>0,86; 0,72; 0,20 m</td><td>linha, avanço máximo e limite lateral do goleiro</td></tr>
+<tr><td><code>KEEPER_PREDICT_TIME</code>, filtro do goleiro</td><td>2,5 s; <i>α</i> = 14 Δ<i>t</i> (interceptando) ou 6 Δ<i>t</i></td><td>previsão do cruzamento e suavização do alvo</td></tr>
+<tr><td><code>KEEPER_CLEAR_DEPTH</code>, <code>_CLEAR_Y</code>, <code>_MAX_OUT_X</code></td><td>0,56 m; 0,24 m; 0,52 m</td><td>quando o goleiro sai e até onde</td></tr>
+<tr><td><code>SUPPORT_BACK</code>, <code>SUPPORT_SIDE</code></td><td>0,18 m; 0,12 m</td><td>posição do apoio no ataque</td></tr>
+<tr><td><code>IDLE_S</code>, <code>T_STUCK</code>, <code>STUCK_BACK</code></td><td>0,8 s; 1,3 s; 0,35 s</td><td>destravamento do atacante e detector de travamento</td></tr>
+</tbody>
+</table>
+
+<h3>5.3&nbsp;&nbsp;Resultados</h3>
+<p>A versão final não sofreu gol em nenhuma das 12 partidas de 5 min. Contra o time parado, fez de 28 a 29 gols por
+partida, nos dois lados. Contra a v2, venceu 5 e empatou 1 (0×0), por 21×0 no total.</p>
+<table>
+<caption>Tabela 9: Futebol (versão final): placar das partidas de 5 min.</caption>
+<thead><tr><th>Confronto</th><th>Nosso lado</th><th class="n">Partida 1</th><th class="n">Partida 2</th><th class="n">Partida 3</th><th class="n">Total (pró × contra)</th></tr></thead>
+<tbody>
+<tr><td>final × parado</td><td>azul</td><td class="n">29×0</td><td class="n">28×0</td><td class="n">29×0</td><td class="n">86×0</td></tr>
+<tr><td>final × parado</td><td>vermelho</td><td class="n">28×0</td><td class="n">29×0</td><td class="n">28×0</td><td class="n">85×0</td></tr>
+<tr><td>final × v2</td><td>azul</td><td class="n">4×0</td><td class="n">4×0</td><td class="n">4×0</td><td class="n">12×0</td></tr>
+<tr><td>final × v2</td><td>vermelho</td><td class="n">5×0</td><td class="n">4×0</td><td class="n">0×0</td><td class="n">9×0</td></tr>
+</tbody>
+</table>
+<p>Contra o parado, sai um gol a cada ≈ 10,5 s, incluindo o reinício do juiz. Contra a v2, a bola esteve no campo
+adversário em 94% a 99% dos quadros gravados a 10 Hz, nas 6 partidas.</p>
+
+<h3>5.4&nbsp;&nbsp;Falhas observadas</h3>
+<ul>
+<li><b>Bola presa no canto do adversário.</b> Contra a v2, a bola ficou junto ao canto do campo adversário
+(|<i>x</i>| &gt; 0,80 m e |<i>y</i>| &gt; 0,45 m) em boa parte do tempo: 36%, 61% e 30% como azul; 0%, 52% e 82% como
+vermelho. Na partida 3 como vermelho, a do 0×0, ela ficou parada em (−0,88; 0,58) de 54 s até o fim, cerca de 246 s
+(Figura 4). O nosso atacante, em (−0,83; 0,55), estava encostado nela, e um jogador da v2, em (−0,85; 0,45), a prensava
+por baixo. A rotina de lateral empurra só no eixo <i>x</i>, então no canto ela prensa a bola contra a parede de fundo e
+não a tira dali. Isso explica os placares baixos (0 a 5 gols) contra a v2, apesar do domínio territorial.</li>
+<li><b>Variação grande entre partidas parecidas.</b> Como vermelho, a final fez 5, 4 e 0 gols contra a v2. O sorteio de
+±5 cm nas posições de saída decide se a bola cai no canto cedo.</li>
+</ul>
+<figure><img src="figuras/fig4_futebol_canto.png" style="width:70%"><figcaption>Figura 4: Futebol final (vermelho, robôs 3 a 5)
+contra a v2 em <i>t</i> = 200 s da partida 3: a bola (laranja) está presa no canto adversário, com o nosso atacante (robô 4)
+atrás dela empurrando em <i>x</i> e um jogador da v2 (robô 2) prensando por baixo.</figcaption></figure>
+<ul>
+<li><b>Histórico.</b> A v1 tinha um <i>deadlock</i> em que o atacante ficava parado para sempre: o ponto de preparação,
+cortado pela parede, coincidia com a posição do robô. Um teste de propriedade em malha fechada (300 configurações
+aleatórias de bola e robô) achou mais dois casos. As configurações paradas caíram de 123 para 0. A versão final mantém o
+destravamento: atacante parado por 0,8 s vai direto na bola por 0,8 s.</li>
+<li><b>Experimentos que não foram para a liga.</b> O apoio com lado travado (<code>soccer_v3_apoio.py</code>) fez 3 e 3
+gols contra o parado em 68 s, contra 5 e 4 da v2. A condução perseguindo a bola, em 23/11, fez 2 gols em 67 s, contra 5.
+Ambos pioraram e foram descartados naquele momento. A condução contínua da versão final foi refeita depois, por outro
+caminho.</li>
+</ul>
+
+<h2>6&nbsp;&nbsp;Experimentos de física (sumô)</h2>
+<p>Antes de escolher a estratégia do sumô, medimos no simulador quatro situações, com nós <code>exp_*.py</code> próprios. Os
+dados estão em <code>exercicios/registros/fase1/</code> e a análise em <code>exercicios/tools/fase1_analise.py</code>, todos de
+23/11.</p>
+<table>
+<caption>Tabela 10: Experimentos de física no simulador.</caption>
+<thead><tr><th>Exp.</th><th>O que mediu</th><th>Resultado</th></tr></thead>
+<tbody>
+<tr><td>E3 frenagem</td><td>distância até parar ao zerar o comando</td><td><b>3,76 cm</b> a 0,20 m/s (3,50 a 3,89) e <b>1,57 cm</b> a 0,10 m/s; parada em ≈ 0,45 s</td></tr>
+<tr><td>E1 frontal</td><td>par em contato, adversário parado, 6 rodadas</td><td>o par anda a <b>0,099 m/s</b>, a média das velocidades-alvo (0,2 e 0); o parado caiu em <b>6 de 6</b>, em ≈ 2,25 s</td></tr>
+<tr><td>E1 lateral</td><td>idem, empurrando pelo flanco, 6 rodadas</td><td>o par anda a <b>0,04 m/s</b>; o adversário caiu em 0 de 6 e o <b>atacante em 6 de 6</b> (escorrega e sai primeiro)</td></tr>
+<tr><td>E2 inclinação</td><td>atacante com heading inclinado <i>ϕ</i> contra um adversário que encara, 10 rodadas por ângulo</td><td><i>ϕ</i> = 0°: <b>10 empates</b>, deslocamento lateral 0,4 cm. <i>ϕ</i> = 35°: <b>10 empates</b>, 4,0 cm em ≈ 43 s</td></tr>
+</tbody>
+</table>
+<p><b>O que isso explica.</b> Cada robô aplica no máximo 0,20 N <b>em cada eixo do mundo</b> (<code>FORCE_MAX</code> no
+<code>world.py</code>). Duas forças saturadas e opostas somam zero, e o par mantém a velocidade que tem. Quem decide é o
+momento no impacto, não a força. Disso saíram três decisões:</p>
+<ul>
+<li>empurrar de frente na velocidade máxima;</li>
+<li>não usar empurrão lateral nem heading inclinado, porque a hipótese H2 não se confirmou;</li>
+<li><i>R<sub>safe</sub></i> = 0,32 m, para caber a frenagem de quase 4 cm antes da borda.</li>
+</ul>
+<p>O excesso de frenagem sobre a física pura (≈ 1,5 cm) equivale a ≈ 115 ms de latência. Esse valor é dedução a partir
+de dois pontos, não foi medido à parte. <b>Não feito:</b> E2 com <i>ϕ</i> = 20° e 50°, E4 (taxa de pegada da bandeira no
+CTF) e E5 (chute no futebol).</p>
+
+<h2>7&nbsp;&nbsp;Limitações e propostas de melhoria</h2>
+<p>Nenhum dos três nós travou ou levantou exceção nas 30 séries de teste, que somam cerca de 3 h de jogo simulado. Os logs
+têm 0 mensagens de erro e nenhum nó morreu. O que limita o resultado é a estratégia, não a robustez.</p>
+<table>
+<caption>Tabela 11: Limitações, evidência e propostas.</caption>
+<thead><tr><th>Limitação</th><th>Evidência</th><th>Proposta</th></tr></thead>
+<tbody>
+<tr><td>Sumô empata com quem empurra de frente</td><td>40 empates em 40 contra a v2; 40 em 40 contra o <code>sumo_tech</code></td><td>medir E2 com <i>ϕ</i> = 20° e 50° e um ataque que ganhe momento antes do impacto (recuar e recarregar fora de contato)</td></tr>
+<tr><td>Âncora do sumô não validada</td><td>nenhuma ativação nos testes; nenhum sparring anda de ré</td><td>fazer um sparring que circule de ré, como o R2D2 observado</td></tr>
+<tr><td>CTF pontua devagar contra defensor perto da bandeira</td><td>12 e 17 pontos em 3 partidas contra a v2; de 5 a 15 prisões por ponto; até 157 s sem ponto</td><td>no FURAR, mirar a bandeira pelo lado oposto ao do contato anterior, ou alternar a aproximação</td></tr>
+<tr><td>Futebol prende a bola no canto adversário</td><td>bola no canto em 30% a 82% do tempo em 5 de 6 jogos contra a v2; 246 s parada no 0×0</td><td>no canto, puxar a bola para o meio (empurrar em <i>y</i>, de dentro para fora) em vez de seguir só em <i>x</i></td></tr>
+<tr><td>Amostras pequenas</td><td>3 partidas por confronto; contra o parado o CTF repete 22×0</td><td>mais sementes e repetir na máquina com ROS, onde a latência introduz variação</td></tr>
+<tr><td>Driver sem latência</td><td>os testes deste relatório não têm a rede do ROS</td><td>repetir as séries no kit com <code>./run.sh run</code> (Seção 8)</td></tr>
+<tr><td>Sparrings são réplicas nossas</td><td><code>sumo_tech</code>, <code>ctf_tech</code>, <code>soccer_nyx</code> feitos a partir de observação da liga</td><td>gravar partidas reais da liga e comparar</td></tr>
+</tbody>
+</table>
+<p><b>O que aprendemos na disciplina e aplicamos aqui.</b> Medir antes de decidir: os experimentos E1 a E3 derrubaram a
+hipótese do arrasto lateral antes de ela virar código. Separar robustez de estratégia: publicar (0, 0) desde o primeiro
+ciclo, nunca morrer e destravar. Congelar versões para comparar com dados. E registrar o que não funcionou, com o porquê,
+em <code>relatorio/DECISOES.md</code>.</p>
+
+<h2>8&nbsp;&nbsp;Repositório, registros, vídeos e reprodução</h2>
+<p>Tudo o que este relatório cita está no repositório <code>https://github.com/LeanHenrique/Tech-Tabajara</code>. O
+<code>readme.md</code> da raiz explica como rodar cada jogo no kit e como repetir as partidas deste relatório.</p>
+<p>Os vídeos são vistas de cima, desenhadas a partir das posições gravadas nas partidas deste relatório. Mostram placar,
+tempo e mensagens do juiz; o contorno amarelo marca um robô preso.</p>
+<table>
+<caption>Tabela 12: Organização do repositório.</caption>
+<thead><tr><th>Pasta ou arquivo</th><th>Conteúdo</th></tr></thead>
+<tbody>
+<tr><td><code>projeto-final/</code></td><td>os três arquivos do torneio (tag <code>torneio</code>)</td></tr>
+<tr><td><code>exercicios/&lt;jogo&gt;/&lt;jogo&gt;.py</code></td><td>versão final de cada jogo, igual à do torneio</td></tr>
+<tr><td><code>exercicios/&lt;jogo&gt;/*_v1.py</code>, <code>*_v2.py</code></td><td>versões anteriores usadas nas comparações</td></tr>
+<tr><td><code>exercicios/&lt;jogo&gt;/</code> (outros)</td><td>sparrings e nós dos experimentos de física</td></tr>
+<tr><td><code>exercicios/registros/fase1/</code></td><td>dados dos experimentos E1 a E3</td></tr>
+<tr><td><code>exercicios/registros/final/</code></td><td>as 30 séries deste relatório: placar, eventos e erros (<code>.json</code>), log dos nós (<code>.log</code>), posições a 10 Hz (<code>*_frames.json</code>) e <code>resumo.csv</code></td></tr>
+<tr><td><code>exercicios/videos/</code></td><td><code>sumo_final_x_parado.mp4</code> (65 s), <code>rouba_bandeira_final_x_v2.mp4</code> (75 s), <code>futebol_final_x_v2.mp4</code> (90 s)</td></tr>
+<tr><td><code>tools/lockstep.py</code>, <code>tools/planos/</code>, <code>tools/render.py</code></td><td>driver das partidas, planos de cada série e gerador dos vídeos</td></tr>
+<tr><td><code>tools/sync.sh</code>, <code>tests/</code></td><td>cópia para <code>projeto-final/</code> com o verificador do professor; testes offline</td></tr>
+<tr><td><code>relatorio/DECISOES.md</code></td><td>cada decisão com a evidência, inclusive as descartadas</td></tr>
+<tr><td><code>relatorio/fonte/</code></td><td>fonte deste relatório (HTML e figuras)</td></tr>
+</tbody>
+</table>
+<p>Para repetir no kit (com ROS, como no torneio), depois de copiar os arquivos do jogo para a pasta
+<code>exercicios/</code> do kit, como explica o <code>readme.md</code>:</p>
+<pre>./run.sh run sumo robot1:=none                # sumô contra robô parado
+./run.sh run sumo robot1:=sumo_v2.py          # final (hero_0) x v2 (hero_1)
+./run.sh run ctf red:=ctf_v2.py               # rouba-bandeira: final (azul) x v2
+./run.sh run soccer blue:=soccer_v2.py        # futebol: v2 (azul) x final (vermelho)</pre>
+<p>Para repetir as séries deste relatório (sem ROS, acelerado):</p>
+<pre>KIT="Trabalho Prático 5"
+"$KIT/.venv/bin/python" tools/lockstep.py --kit "$KIT/sim" \
+    --utils "$KIT/ros/psr_hero/src" \
+    --plan tools/planos/sumo.json tools/planos/ctf.json tools/planos/soccer.json \
+    --out exercicios/registros/final --jobs 15</pre>
+
+</body>
+</html>
