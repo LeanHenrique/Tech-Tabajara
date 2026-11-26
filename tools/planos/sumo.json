@@ -1,0 +1,75 @@
+{
+ "descricao": "Gerado para tools/lockstep.py. 'files' diz qual arquivo controla cada lado; um lado ausente fica parado (sem nó). Sumô: 20 rodadas por confronto.",
+ "series": [
+  {
+   "name": "sumo_final_x_parado_hero0",
+   "scenario": "sumo",
+   "files": {
+    "robot0": "projeto-final/sumo.py"
+   },
+   "ours": "hero_0",
+   "opponent": "parado",
+   "seed": 100,
+   "rounds": 20
+  },
+  {
+   "name": "sumo_final_x_parado_hero1",
+   "scenario": "sumo",
+   "files": {
+    "robot1": "projeto-final/sumo.py"
+   },
+   "ours": "hero_1",
+   "opponent": "parado",
+   "seed": 101,
+   "rounds": 20
+  },
+  {
+   "name": "sumo_final_x_v2_hero0",
+   "scenario": "sumo",
+   "files": {
+    "robot0": "projeto-final/sumo.py",
+    "robot1": "exercicios/sumo/sumo_v2.py"
+   },
+   "ours": "hero_0",
+   "opponent": "v2",
+   "seed": 110,
+   "rounds": 20
+  },
+  {
+   "name": "sumo_final_x_v2_hero1",
+   "scenario": "sumo",
+   "files": {
+    "robot1": "projeto-final/sumo.py",
+    "robot0": "exercicios/sumo/sumo_v2.py"
+   },
+   "ours": "hero_1",
+   "opponent": "v2",
+   "seed": 111,
+   "rounds": 20
+  },
+  {
+   "name": "sumo_final_x_sumo_tech_hero0",
+   "scenario": "sumo",
+   "files": {
+    "robot0": "projeto-final/sumo.py",
+    "robot1": "exercicios/sumo/sumo_tech.py"
+   },
+   "ours": "hero_0",
+   "opponent": "sumo_tech",
+   "seed": 120,
+   "rounds": 20
+  },
+  {
+   "name": "sumo_final_x_sumo_tech_hero1",
+   "scenario": "sumo",
+   "files": {
+    "robot1": "projeto-final/sumo.py",
+    "robot0": "exercicios/sumo/sumo_tech.py"
+   },
+   "ours": "hero_1",
+   "opponent": "sumo_tech",
+   "seed": 121,
+   "rounds": 20
+  }
+ ]
+}

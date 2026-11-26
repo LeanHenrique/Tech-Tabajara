@@ -1,0 +1,31 @@
+serie,jogo,nosso_lado,adversario,semente,tempo_simulado_s,placar_final,erros
+ctf_final_x_parado_azul_p1,ctf,blue,parado,201,300.02,"{""score"": [22, 0], ""tags"": [0, 0, 0, 0]}",0
+ctf_final_x_parado_azul_p2,ctf,blue,parado,202,300.02,"{""score"": [22, 0], ""tags"": [0, 0, 0, 0]}",0
+ctf_final_x_parado_azul_p3,ctf,blue,parado,203,300.02,"{""score"": [22, 0], ""tags"": [0, 0, 0, 0]}",0
+ctf_final_x_parado_vermelho_p1,ctf,red,parado,211,300.02,"{""score"": [0, 22], ""tags"": [0, 0, 0, 0]}",0
+ctf_final_x_parado_vermelho_p2,ctf,red,parado,212,300.02,"{""score"": [0, 22], ""tags"": [0, 0, 0, 0]}",0
+ctf_final_x_parado_vermelho_p3,ctf,red,parado,213,300.02,"{""score"": [0, 22], ""tags"": [0, 0, 0, 0]}",0
+ctf_final_x_v2_azul_p1,ctf,blue,v2,221,300.02,"{""score"": [3, 0], ""tags"": [45, 0, 50, 0]}",0
+ctf_final_x_v2_azul_p2,ctf,blue,v2,222,300.02,"{""score"": [3, 0], ""tags"": [44, 0, 51, 0]}",0
+ctf_final_x_v2_azul_p3,ctf,blue,v2,223,300.02,"{""score"": [6, 0], ""tags"": [41, 0, 48, 0]}",0
+ctf_final_x_v2_vermelho_p1,ctf,red,v2,231,300.02,"{""score"": [0, 7], ""tags"": [48, 0, 38, 0]}",0
+ctf_final_x_v2_vermelho_p2,ctf,red,v2,232,300.02,"{""score"": [0, 6], ""tags"": [48, 0, 40, 0]}",0
+ctf_final_x_v2_vermelho_p3,ctf,red,v2,233,300.02,"{""score"": [0, 4], ""tags"": [48, 0, 43, 0]}",0
+soccer_final_x_parado_azul_p1,soccer,blue,parado,301,300.02,"{""score"": [29, 0]}",0
+soccer_final_x_parado_azul_p2,soccer,blue,parado,302,300.02,"{""score"": [28, 0]}",0
+soccer_final_x_parado_azul_p3,soccer,blue,parado,303,300.02,"{""score"": [29, 0]}",0
+soccer_final_x_parado_vermelho_p1,soccer,red,parado,311,300.02,"{""score"": [0, 28]}",0
+soccer_final_x_parado_vermelho_p2,soccer,red,parado,312,300.02,"{""score"": [0, 29]}",0
+soccer_final_x_parado_vermelho_p3,soccer,red,parado,313,300.02,"{""score"": [0, 28]}",0
+soccer_final_x_v2_azul_p1,soccer,blue,v2,321,300.02,"{""score"": [4, 0]}",0
+soccer_final_x_v2_azul_p2,soccer,blue,v2,322,300.02,"{""score"": [4, 0]}",0
+soccer_final_x_v2_azul_p3,soccer,blue,v2,323,300.02,"{""score"": [4, 0]}",0
+soccer_final_x_v2_vermelho_p1,soccer,red,v2,331,300.02,"{""score"": [0, 5]}",0
+soccer_final_x_v2_vermelho_p2,soccer,red,v2,332,300.02,"{""score"": [0, 4]}",0
+soccer_final_x_v2_vermelho_p3,soccer,red,v2,333,300.02,"{""score"": [0, 0]}",0
+sumo_final_x_parado_hero0,sumo,hero_0,parado,100,126.08,"{""wins"": [20, 0], ""draws"": 0}",0
+sumo_final_x_parado_hero1,sumo,hero_1,parado,101,125.66,"{""wins"": [0, 20], ""draws"": 0}",0
+sumo_final_x_sumo_tech_hero0,sumo,hero_0,sumo_tech,120,840.72,"{""wins"": [0, 0], ""draws"": 20}",0
+sumo_final_x_sumo_tech_hero1,sumo,hero_1,sumo_tech,121,840.72,"{""wins"": [0, 0], ""draws"": 20}",0
+sumo_final_x_v2_hero0,sumo,hero_0,v2,110,840.72,"{""wins"": [0, 0], ""draws"": 20}",0
+sumo_final_x_v2_hero1,sumo,hero_1,v2,111,840.72,"{""wins"": [0, 0], ""draws"": 20}",0

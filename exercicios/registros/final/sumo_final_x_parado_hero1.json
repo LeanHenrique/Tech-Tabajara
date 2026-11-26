@@ -1,0 +1,234 @@
+{
+ "name": "sumo_final_x_parado_hero1",
+ "scenario": "sumo",
+ "files": {
+  "robot1": "projeto-final/sumo.py"
+ },
+ "seed": 101,
+ "ours": "hero_1",
+ "opponent": "parado",
+ "sim_time": 125.66,
+ "wall_time": 7.9,
+ "final": {
+  "wins": [
+   0,
+   20
+  ],
+  "draws": 0
+ },
+ "errors": {
+  "sumo_1": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 3.86,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    1
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 10.1,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    2
+   ],
+   "draws": 0,
+   "round_time": 3.7
+  },
+  {
+   "t": 16.38,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    3
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 22.62,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    4
+   ],
+   "draws": 0,
+   "round_time": 3.7
+  },
+  {
+   "t": 28.9,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    5
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 35.24,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    6
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 41.5,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    7
+   ],
+   "draws": 0,
+   "round_time": 3.7
+  },
+  {
+   "t": 47.8,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    8
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 54.08,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    9
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 60.38,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    10
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 66.68,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    11
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 72.94,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    12
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 79.28,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    13
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 85.52,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    14
+   ],
+   "draws": 0,
+   "round_time": 3.7
+  },
+  {
+   "t": 91.78,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    15
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 98.04,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    16
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 104.34,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    17
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 110.6,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    18
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 116.88,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    19
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  },
+  {
+   "t": 123.16,
+   "message": "hero_1 venceu",
+   "wins": [
+    0,
+    20
+   ],
+   "draws": 0,
+   "round_time": 3.8
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "sumo_1": 20.0
+  },
+  "phase_s": {
+   "sumo_1": 0.02
+  }
+ }
+}

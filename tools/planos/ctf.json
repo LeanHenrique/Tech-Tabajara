@@ -1,0 +1,143 @@
+{
+ "descricao": "Gerado para tools/lockstep.py. 'files' diz qual arquivo controla cada lado; um lado ausente fica parado (sem nó). Partidas de 5 min.",
+ "series": [
+  {
+   "name": "ctf_final_x_parado_azul_p1",
+   "scenario": "ctf",
+   "files": {
+    "blue": "projeto-final/ctf.py"
+   },
+   "ours": "blue",
+   "opponent": "parado",
+   "seed": 201,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_parado_azul_p2",
+   "scenario": "ctf",
+   "files": {
+    "blue": "projeto-final/ctf.py"
+   },
+   "ours": "blue",
+   "opponent": "parado",
+   "seed": 202,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_parado_azul_p3",
+   "scenario": "ctf",
+   "files": {
+    "blue": "projeto-final/ctf.py"
+   },
+   "ours": "blue",
+   "opponent": "parado",
+   "seed": 203,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_parado_vermelho_p1",
+   "scenario": "ctf",
+   "files": {
+    "red": "projeto-final/ctf.py"
+   },
+   "ours": "red",
+   "opponent": "parado",
+   "seed": 211,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_parado_vermelho_p2",
+   "scenario": "ctf",
+   "files": {
+    "red": "projeto-final/ctf.py"
+   },
+   "ours": "red",
+   "opponent": "parado",
+   "seed": 212,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_parado_vermelho_p3",
+   "scenario": "ctf",
+   "files": {
+    "red": "projeto-final/ctf.py"
+   },
+   "ours": "red",
+   "opponent": "parado",
+   "seed": 213,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_v2_azul_p1",
+   "scenario": "ctf",
+   "files": {
+    "blue": "projeto-final/ctf.py",
+    "red": "exercicios/ctf/ctf_v2.py"
+   },
+   "ours": "blue",
+   "opponent": "v2",
+   "seed": 221,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_v2_azul_p2",
+   "scenario": "ctf",
+   "files": {
+    "blue": "projeto-final/ctf.py",
+    "red": "exercicios/ctf/ctf_v2.py"
+   },
+   "ours": "blue",
+   "opponent": "v2",
+   "seed": 222,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_v2_azul_p3",
+   "scenario": "ctf",
+   "files": {
+    "blue": "projeto-final/ctf.py",
+    "red": "exercicios/ctf/ctf_v2.py"
+   },
+   "ours": "blue",
+   "opponent": "v2",
+   "seed": 223,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_v2_vermelho_p1",
+   "scenario": "ctf",
+   "files": {
+    "red": "projeto-final/ctf.py",
+    "blue": "exercicios/ctf/ctf_v2.py"
+   },
+   "ours": "red",
+   "opponent": "v2",
+   "seed": 231,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_v2_vermelho_p2",
+   "scenario": "ctf",
+   "files": {
+    "red": "projeto-final/ctf.py",
+    "blue": "exercicios/ctf/ctf_v2.py"
+   },
+   "ours": "red",
+   "opponent": "v2",
+   "seed": 232,
+   "duration": 300
+  },
+  {
+   "name": "ctf_final_x_v2_vermelho_p3",
+   "scenario": "ctf",
+   "files": {
+    "red": "projeto-final/ctf.py",
+    "blue": "exercicios/ctf/ctf_v2.py"
+   },
+   "ours": "red",
+   "opponent": "v2",
+   "seed": 233,
+   "duration": 300
+  }
+ ]
+}

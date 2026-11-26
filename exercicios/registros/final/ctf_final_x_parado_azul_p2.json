@@ -1,0 +1,350 @@
+{
+ "name": "ctf_final_x_parado_azul_p2",
+ "scenario": "ctf",
+ "files": {
+  "blue": "projeto-final/ctf.py"
+ },
+ "seed": 202,
+ "ours": "blue",
+ "opponent": "parado",
+ "sim_time": 300.02,
+ "wall_time": 34.6,
+ "final": {
+  "score": [
+   22,
+   0
+  ],
+  "tags": [
+   0,
+   0,
+   0,
+   0
+  ]
+ },
+ "errors": {
+  "ctf_0": 0,
+  "ctf_1": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 11.6,
+   "message": "Ponto do azul!",
+   "score": [
+    1,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 25.08,
+   "message": "Ponto do azul!",
+   "score": [
+    2,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 38.46,
+   "message": "Ponto do azul!",
+   "score": [
+    3,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 51.96,
+   "message": "Ponto do azul!",
+   "score": [
+    4,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 65.46,
+   "message": "Ponto do azul!",
+   "score": [
+    5,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 79.06,
+   "message": "Ponto do azul!",
+   "score": [
+    6,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 92.58,
+   "message": "Ponto do azul!",
+   "score": [
+    7,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 106.32,
+   "message": "Ponto do azul!",
+   "score": [
+    8,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 119.88,
+   "message": "Ponto do azul!",
+   "score": [
+    9,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 133.26,
+   "message": "Ponto do azul!",
+   "score": [
+    10,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 146.92,
+   "message": "Ponto do azul!",
+   "score": [
+    11,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 160.42,
+   "message": "Ponto do azul!",
+   "score": [
+    12,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 173.86,
+   "message": "Ponto do azul!",
+   "score": [
+    13,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 187.42,
+   "message": "Ponto do azul!",
+   "score": [
+    14,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 200.9,
+   "message": "Ponto do azul!",
+   "score": [
+    15,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 214.38,
+   "message": "Ponto do azul!",
+   "score": [
+    16,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 227.84,
+   "message": "Ponto do azul!",
+   "score": [
+    17,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 241.24,
+   "message": "Ponto do azul!",
+   "score": [
+    18,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 254.74,
+   "message": "Ponto do azul!",
+   "score": [
+    19,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 268.34,
+   "message": "Ponto do azul!",
+   "score": [
+    20,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 281.76,
+   "message": "Ponto do azul!",
+   "score": [
+    21,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 295.3,
+   "message": "Ponto do azul!",
+   "score": [
+    22,
+    0
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "ctf_0": 20.0,
+   "ctf_1": 20.0
+  },
+  "phase_s": {
+   "ctf_0": 0.027,
+   "ctf_1": 0.04
+  }
+ }
+}

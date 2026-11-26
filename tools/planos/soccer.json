@@ -1,0 +1,143 @@
+{
+ "descricao": "Gerado para tools/lockstep.py. 'files' diz qual arquivo controla cada lado; um lado ausente fica parado (sem nó). Partidas de 5 min.",
+ "series": [
+  {
+   "name": "soccer_final_x_parado_azul_p1",
+   "scenario": "soccer",
+   "files": {
+    "blue": "projeto-final/soccer.py"
+   },
+   "ours": "blue",
+   "opponent": "parado",
+   "seed": 301,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_parado_azul_p2",
+   "scenario": "soccer",
+   "files": {
+    "blue": "projeto-final/soccer.py"
+   },
+   "ours": "blue",
+   "opponent": "parado",
+   "seed": 302,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_parado_azul_p3",
+   "scenario": "soccer",
+   "files": {
+    "blue": "projeto-final/soccer.py"
+   },
+   "ours": "blue",
+   "opponent": "parado",
+   "seed": 303,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_parado_vermelho_p1",
+   "scenario": "soccer",
+   "files": {
+    "red": "projeto-final/soccer.py"
+   },
+   "ours": "red",
+   "opponent": "parado",
+   "seed": 311,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_parado_vermelho_p2",
+   "scenario": "soccer",
+   "files": {
+    "red": "projeto-final/soccer.py"
+   },
+   "ours": "red",
+   "opponent": "parado",
+   "seed": 312,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_parado_vermelho_p3",
+   "scenario": "soccer",
+   "files": {
+    "red": "projeto-final/soccer.py"
+   },
+   "ours": "red",
+   "opponent": "parado",
+   "seed": 313,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_v2_azul_p1",
+   "scenario": "soccer",
+   "files": {
+    "blue": "projeto-final/soccer.py",
+    "red": "exercicios/soccer/soccer_v2.py"
+   },
+   "ours": "blue",
+   "opponent": "v2",
+   "seed": 321,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_v2_azul_p2",
+   "scenario": "soccer",
+   "files": {
+    "blue": "projeto-final/soccer.py",
+    "red": "exercicios/soccer/soccer_v2.py"
+   },
+   "ours": "blue",
+   "opponent": "v2",
+   "seed": 322,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_v2_azul_p3",
+   "scenario": "soccer",
+   "files": {
+    "blue": "projeto-final/soccer.py",
+    "red": "exercicios/soccer/soccer_v2.py"
+   },
+   "ours": "blue",
+   "opponent": "v2",
+   "seed": 323,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_v2_vermelho_p1",
+   "scenario": "soccer",
+   "files": {
+    "red": "projeto-final/soccer.py",
+    "blue": "exercicios/soccer/soccer_v2.py"
+   },
+   "ours": "red",
+   "opponent": "v2",
+   "seed": 331,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_v2_vermelho_p2",
+   "scenario": "soccer",
+   "files": {
+    "red": "projeto-final/soccer.py",
+    "blue": "exercicios/soccer/soccer_v2.py"
+   },
+   "ours": "red",
+   "opponent": "v2",
+   "seed": 332,
+   "duration": 300
+  },
+  {
+   "name": "soccer_final_x_v2_vermelho_p3",
+   "scenario": "soccer",
+   "files": {
+    "red": "projeto-final/soccer.py",
+    "blue": "exercicios/soccer/soccer_v2.py"
+   },
+   "ours": "red",
+   "opponent": "v2",
+   "seed": 333,
+   "duration": 300
+  }
+ ]
+}

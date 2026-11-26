@@ -1,0 +1,257 @@
+{
+ "name": "soccer_final_x_parado_vermelho_p3",
+ "scenario": "soccer",
+ "files": {
+  "red": "projeto-final/soccer.py"
+ },
+ "seed": 313,
+ "ours": "red",
+ "opponent": "parado",
+ "sim_time": 300.02,
+ "wall_time": 36.0,
+ "final": {
+  "score": [
+   0,
+   28
+  ]
+ },
+ "errors": {
+  "soccer_red": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 7.42,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 16.82,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 26.12,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 37.22,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 46.08,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 55.08,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 66.82,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    7
+   ]
+  },
+  {
+   "t": 76.06,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    8
+   ]
+  },
+  {
+   "t": 85.82,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    9
+   ]
+  },
+  {
+   "t": 97.62,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    10
+   ]
+  },
+  {
+   "t": 109.0,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    11
+   ]
+  },
+  {
+   "t": 118.66,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    12
+   ]
+  },
+  {
+   "t": 127.92,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    13
+   ]
+  },
+  {
+   "t": 136.86,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    14
+   ]
+  },
+  {
+   "t": 148.38,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    15
+   ]
+  },
+  {
+   "t": 158.24,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    16
+   ]
+  },
+  {
+   "t": 169.76,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    17
+   ]
+  },
+  {
+   "t": 181.58,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    18
+   ]
+  },
+  {
+   "t": 193.52,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    19
+   ]
+  },
+  {
+   "t": 205.34,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    20
+   ]
+  },
+  {
+   "t": 217.1,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    21
+   ]
+  },
+  {
+   "t": 226.86,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    22
+   ]
+  },
+  {
+   "t": 238.14,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    23
+   ]
+  },
+  {
+   "t": 247.22,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    24
+   ]
+  },
+  {
+   "t": 257.0,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    25
+   ]
+  },
+  {
+   "t": 268.58,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    26
+   ]
+  },
+  {
+   "t": 280.52,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    27
+   ]
+  },
+  {
+   "t": 291.82,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    28
+   ]
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "soccer_red": 20.0
+  },
+  "phase_s": {
+   "soccer_red": 0.004
+  }
+ }
+}

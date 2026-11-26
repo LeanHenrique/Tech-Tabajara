@@ -1,0 +1,77 @@
+{
+ "name": "soccer_final_x_v2_vermelho_p1",
+ "scenario": "soccer",
+ "files": {
+  "red": "projeto-final/soccer.py",
+  "blue": "exercicios/soccer/soccer_v2.py"
+ },
+ "seed": 331,
+ "ours": "red",
+ "opponent": "v2",
+ "sim_time": 300.02,
+ "wall_time": 37.2,
+ "final": {
+  "score": [
+   0,
+   5
+  ]
+ },
+ "errors": {
+  "soccer_blue": 0,
+  "soccer_red": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 72.16,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 118.02,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 157.34,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 214.14,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 261.28,
+   "message": "Gol do vermelho!",
+   "score": [
+    0,
+    5
+   ]
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "soccer_blue": 20.0,
+   "soccer_red": 20.0
+  },
+  "phase_s": {
+   "soccer_blue": 0.03,
+   "soccer_red": 0.043
+  }
+ }
+}

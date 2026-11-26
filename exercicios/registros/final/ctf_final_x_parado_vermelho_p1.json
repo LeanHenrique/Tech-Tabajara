@@ -1,0 +1,350 @@
+{
+ "name": "ctf_final_x_parado_vermelho_p1",
+ "scenario": "ctf",
+ "files": {
+  "red": "projeto-final/ctf.py"
+ },
+ "seed": 211,
+ "ours": "red",
+ "opponent": "parado",
+ "sim_time": 300.02,
+ "wall_time": 36.8,
+ "final": {
+  "score": [
+   0,
+   22
+  ],
+  "tags": [
+   0,
+   0,
+   0,
+   0
+  ]
+ },
+ "errors": {
+  "ctf_2": 0,
+  "ctf_3": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 11.68,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 25.18,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 38.74,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 52.26,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 65.9,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 79.32,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 93.0,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    7
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 106.42,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    8
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 119.98,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    9
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 133.44,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    10
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 147.04,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    11
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 160.54,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    12
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 174.04,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    13
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 187.56,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    14
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 201.22,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    15
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 214.78,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    16
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 228.26,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    17
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 241.74,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    18
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 255.22,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    19
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 268.74,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    20
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 282.22,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    21
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 295.6,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    22
+   ],
+   "tags": [
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "ctf_2": 20.0,
+   "ctf_3": 20.0
+  },
+  "phase_s": {
+   "ctf_2": 0.04,
+   "ctf_3": 0.003
+  }
+ }
+}

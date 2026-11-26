@@ -1,0 +1,2069 @@
+{
+ "name": "ctf_final_x_v2_vermelho_p2",
+ "scenario": "ctf",
+ "files": {
+  "red": "projeto-final/ctf.py",
+  "blue": "exercicios/ctf/ctf_v2.py"
+ },
+ "seed": 232,
+ "ours": "red",
+ "opponent": "v2",
+ "sim_time": 300.02,
+ "wall_time": 37.2,
+ "final": {
+  "score": [
+   0,
+   6
+  ],
+  "tags": [
+   48,
+   0,
+   40,
+   0
+  ]
+ },
+ "errors": {
+  "ctf_0": 0,
+  "ctf_1": 0,
+  "ctf_2": 0,
+  "ctf_3": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 3.68,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    1,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "t": 3.68,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 5.4,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    1,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "t": 5.4,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 9.4,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    2,
+    0,
+    1,
+    0
+   ]
+  },
+  {
+   "t": 9.4,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 10.92,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    2,
+    0,
+    2,
+    0
+   ]
+  },
+  {
+   "t": 10.92,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 14.92,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    3,
+    0,
+    2,
+    0
+   ]
+  },
+  {
+   "t": 14.92,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 16.44,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    3,
+    0,
+    3,
+    0
+   ]
+  },
+  {
+   "t": 16.44,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 20.42,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    4,
+    0,
+    3,
+    0
+   ]
+  },
+  {
+   "t": 20.42,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 23.04,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    4,
+    0,
+    4,
+    0
+   ]
+  },
+  {
+   "t": 23.04,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 25.94,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    5,
+    0,
+    4,
+    0
+   ]
+  },
+  {
+   "t": 25.94,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 28.54,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    5,
+    0,
+    5,
+    0
+   ]
+  },
+  {
+   "t": 28.54,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 31.44,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    6,
+    0,
+    5,
+    0
+   ]
+  },
+  {
+   "t": 31.44,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 34.04,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    6,
+    0,
+    6,
+    0
+   ]
+  },
+  {
+   "t": 34.04,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 36.96,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    7,
+    0,
+    6,
+    0
+   ]
+  },
+  {
+   "t": 36.96,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 39.56,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    7,
+    0,
+    7,
+    0
+   ]
+  },
+  {
+   "t": 39.56,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 42.52,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    8,
+    0,
+    7,
+    0
+   ]
+  },
+  {
+   "t": 42.52,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 46.42,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    8,
+    0,
+    8,
+    0
+   ]
+  },
+  {
+   "t": 46.42,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 48.22,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    9,
+    0,
+    8,
+    0
+   ]
+  },
+  {
+   "t": 48.22,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 51.94,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    9,
+    0,
+    9,
+    0
+   ]
+  },
+  {
+   "t": 51.94,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 53.74,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    10,
+    0,
+    9,
+    0
+   ]
+  },
+  {
+   "t": 53.74,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 58.82,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    10,
+    0,
+    10,
+    0
+   ]
+  },
+  {
+   "t": 58.82,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 59.26,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    11,
+    0,
+    10,
+    0
+   ]
+  },
+  {
+   "t": 59.26,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 64.34,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    11,
+    0,
+    11,
+    0
+   ]
+  },
+  {
+   "t": 64.34,
+   "held": 2,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 65.26,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    12,
+    0,
+    11,
+    0
+   ]
+  },
+  {
+   "t": 65.26,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 70.76,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    0
+   ],
+   "tags": [
+    13,
+    0,
+    11,
+    0
+   ]
+  },
+  {
+   "t": 70.76,
+   "held": 0,
+   "score": [
+    0,
+    0
+   ]
+  },
+  {
+   "t": 72.86,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    13,
+    0,
+    11,
+    0
+   ]
+  },
+  {
+   "t": 78.48,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    14,
+    0,
+    11,
+    0
+   ]
+  },
+  {
+   "t": 78.48,
+   "held": 0,
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 80.1,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    14,
+    0,
+    12,
+    0
+   ]
+  },
+  {
+   "t": 80.1,
+   "held": 2,
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 84.36,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    15,
+    0,
+    12,
+    0
+   ]
+  },
+  {
+   "t": 84.36,
+   "held": 0,
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 85.6,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    15,
+    0,
+    13,
+    0
+   ]
+  },
+  {
+   "t": 85.6,
+   "held": 2,
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 89.86,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    1
+   ],
+   "tags": [
+    16,
+    0,
+    13,
+    0
+   ]
+  },
+  {
+   "t": 89.86,
+   "held": 0,
+   "score": [
+    0,
+    1
+   ]
+  },
+  {
+   "t": 94.12,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    16,
+    0,
+    13,
+    0
+   ]
+  },
+  {
+   "t": 99.64,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    17,
+    0,
+    13,
+    0
+   ]
+  },
+  {
+   "t": 99.64,
+   "held": 0,
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 101.44,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    17,
+    0,
+    14,
+    0
+   ]
+  },
+  {
+   "t": 101.44,
+   "held": 2,
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 105.5,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    18,
+    0,
+    14,
+    0
+   ]
+  },
+  {
+   "t": 105.5,
+   "held": 0,
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 106.94,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    18,
+    0,
+    15,
+    0
+   ]
+  },
+  {
+   "t": 106.94,
+   "held": 2,
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 111.0,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    2
+   ],
+   "tags": [
+    19,
+    0,
+    15,
+    0
+   ]
+  },
+  {
+   "t": 111.0,
+   "held": 0,
+   "score": [
+    0,
+    2
+   ]
+  },
+  {
+   "t": 115.5,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    19,
+    0,
+    15,
+    0
+   ]
+  },
+  {
+   "t": 121.08,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    20,
+    0,
+    15,
+    0
+   ]
+  },
+  {
+   "t": 121.08,
+   "held": 0,
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 122.84,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    20,
+    0,
+    16,
+    0
+   ]
+  },
+  {
+   "t": 122.84,
+   "held": 2,
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 126.78,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    21,
+    0,
+    16,
+    0
+   ]
+  },
+  {
+   "t": 126.78,
+   "held": 0,
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 128.34,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    21,
+    0,
+    17,
+    0
+   ]
+  },
+  {
+   "t": 128.34,
+   "held": 2,
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 132.3,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    3
+   ],
+   "tags": [
+    22,
+    0,
+    17,
+    0
+   ]
+  },
+  {
+   "t": 132.3,
+   "held": 0,
+   "score": [
+    0,
+    3
+   ]
+  },
+  {
+   "t": 136.86,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    22,
+    0,
+    17,
+    0
+   ]
+  },
+  {
+   "t": 142.6,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    23,
+    0,
+    17,
+    0
+   ]
+  },
+  {
+   "t": 142.6,
+   "held": 0,
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 144.12,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    23,
+    0,
+    18,
+    0
+   ]
+  },
+  {
+   "t": 144.12,
+   "held": 2,
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 148.14,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    24,
+    0,
+    18,
+    0
+   ]
+  },
+  {
+   "t": 148.14,
+   "held": 0,
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 149.64,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    24,
+    0,
+    19,
+    0
+   ]
+  },
+  {
+   "t": 149.64,
+   "held": 2,
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 153.92,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    4
+   ],
+   "tags": [
+    25,
+    0,
+    19,
+    0
+   ]
+  },
+  {
+   "t": 153.92,
+   "held": 0,
+   "score": [
+    0,
+    4
+   ]
+  },
+  {
+   "t": 158.24,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    25,
+    0,
+    19,
+    0
+   ]
+  },
+  {
+   "t": 164.06,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    26,
+    0,
+    19,
+    0
+   ]
+  },
+  {
+   "t": 164.06,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 165.58,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    26,
+    0,
+    20,
+    0
+   ]
+  },
+  {
+   "t": 165.58,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 169.58,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    27,
+    0,
+    20,
+    0
+   ]
+  },
+  {
+   "t": 169.58,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 171.1,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    27,
+    0,
+    21,
+    0
+   ]
+  },
+  {
+   "t": 171.1,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 175.44,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    28,
+    0,
+    21,
+    0
+   ]
+  },
+  {
+   "t": 175.44,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 176.62,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    28,
+    0,
+    22,
+    0
+   ]
+  },
+  {
+   "t": 176.62,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 180.96,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    29,
+    0,
+    22,
+    0
+   ]
+  },
+  {
+   "t": 180.96,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 182.14,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    29,
+    0,
+    23,
+    0
+   ]
+  },
+  {
+   "t": 182.14,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 186.48,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    30,
+    0,
+    23,
+    0
+   ]
+  },
+  {
+   "t": 186.48,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 188.24,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    30,
+    0,
+    24,
+    0
+   ]
+  },
+  {
+   "t": 188.24,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 193.76,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    30,
+    0,
+    25,
+    0
+   ]
+  },
+  {
+   "t": 193.76,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 195.8,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    31,
+    0,
+    25,
+    0
+   ]
+  },
+  {
+   "t": 195.8,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 199.28,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    31,
+    0,
+    26,
+    0
+   ]
+  },
+  {
+   "t": 199.28,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 202.1,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    32,
+    0,
+    26,
+    0
+   ]
+  },
+  {
+   "t": 202.1,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 204.8,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    32,
+    0,
+    27,
+    0
+   ]
+  },
+  {
+   "t": 204.8,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 207.62,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    33,
+    0,
+    27,
+    0
+   ]
+  },
+  {
+   "t": 207.62,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 210.32,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    33,
+    0,
+    28,
+    0
+   ]
+  },
+  {
+   "t": 210.32,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 213.14,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    34,
+    0,
+    28,
+    0
+   ]
+  },
+  {
+   "t": 213.14,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 215.84,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    34,
+    0,
+    29,
+    0
+   ]
+  },
+  {
+   "t": 215.84,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 218.66,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    35,
+    0,
+    29,
+    0
+   ]
+  },
+  {
+   "t": 218.66,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 222.78,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    35,
+    0,
+    30,
+    0
+   ]
+  },
+  {
+   "t": 222.78,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 224.18,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    36,
+    0,
+    30,
+    0
+   ]
+  },
+  {
+   "t": 224.18,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 228.3,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    36,
+    0,
+    31,
+    0
+   ]
+  },
+  {
+   "t": 228.3,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 232.94,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    37,
+    0,
+    31,
+    0
+   ]
+  },
+  {
+   "t": 232.94,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 233.82,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    37,
+    0,
+    32,
+    0
+   ]
+  },
+  {
+   "t": 233.82,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 239.04,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    38,
+    0,
+    32,
+    0
+   ]
+  },
+  {
+   "t": 239.04,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 239.34,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    38,
+    0,
+    33,
+    0
+   ]
+  },
+  {
+   "t": 239.34,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 244.56,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    39,
+    0,
+    33,
+    0
+   ]
+  },
+  {
+   "t": 244.56,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 246.1,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    39,
+    0,
+    34,
+    0
+   ]
+  },
+  {
+   "t": 246.1,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 250.08,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    40,
+    0,
+    34,
+    0
+   ]
+  },
+  {
+   "t": 250.08,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 255.78,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    41,
+    0,
+    34,
+    0
+   ]
+  },
+  {
+   "t": 255.78,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 257.62,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    41,
+    0,
+    35,
+    0
+   ]
+  },
+  {
+   "t": 257.62,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 261.76,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    42,
+    0,
+    35,
+    0
+   ]
+  },
+  {
+   "t": 261.76,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 263.14,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    42,
+    0,
+    36,
+    0
+   ]
+  },
+  {
+   "t": 263.14,
+   "held": 2,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 267.28,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    5
+   ],
+   "tags": [
+    43,
+    0,
+    36,
+    0
+   ]
+  },
+  {
+   "t": 267.28,
+   "held": 0,
+   "score": [
+    0,
+    5
+   ]
+  },
+  {
+   "t": 271.7,
+   "message": "Ponto do vermelho!",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    43,
+    0,
+    36,
+    0
+   ]
+  },
+  {
+   "t": 277.28,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    44,
+    0,
+    36,
+    0
+   ]
+  },
+  {
+   "t": 277.28,
+   "held": 0,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 279.08,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    44,
+    0,
+    37,
+    0
+   ]
+  },
+  {
+   "t": 279.08,
+   "held": 2,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 282.8,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    45,
+    0,
+    37,
+    0
+   ]
+  },
+  {
+   "t": 282.8,
+   "held": 0,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 284.6,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    45,
+    0,
+    38,
+    0
+   ]
+  },
+  {
+   "t": 284.6,
+   "held": 2,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 288.32,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    46,
+    0,
+    38,
+    0
+   ]
+  },
+  {
+   "t": 288.32,
+   "held": 0,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 291.44,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    46,
+    0,
+    39,
+    0
+   ]
+  },
+  {
+   "t": 291.44,
+   "held": 2,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 293.84,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    47,
+    0,
+    39,
+    0
+   ]
+  },
+  {
+   "t": 293.84,
+   "held": 0,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 296.96,
+   "message": "hero_1 segurou o hero_2 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    47,
+    0,
+    40,
+    0
+   ]
+  },
+  {
+   "t": 296.96,
+   "held": 2,
+   "score": [
+    0,
+    6
+   ]
+  },
+  {
+   "t": 299.36,
+   "message": "hero_3 segurou o hero_0 por 4 s",
+   "score": [
+    0,
+    6
+   ],
+   "tags": [
+    48,
+    0,
+    40,
+    0
+   ]
+  },
+  {
+   "t": 299.36,
+   "held": 0,
+   "score": [
+    0,
+    6
+   ]
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "ctf_0": 20.0,
+   "ctf_1": 20.0,
+   "ctf_2": 20.0,
+   "ctf_3": 20.0
+  },
+  "phase_s": {
+   "ctf_0": 0.037,
+   "ctf_1": 0.0,
+   "ctf_2": 0.013,
+   "ctf_3": 0.026
+  }
+ }
+}

@@ -1,0 +1,238 @@
+{
+ "name": "sumo_final_x_sumo_tech_hero0",
+ "scenario": "sumo",
+ "files": {
+  "robot0": "projeto-final/sumo.py",
+  "robot1": "exercicios/sumo/sumo_tech.py"
+ },
+ "seed": 120,
+ "ours": "hero_0",
+ "opponent": "sumo_tech",
+ "sim_time": 840.72,
+ "wall_time": 50.4,
+ "final": {
+  "wins": [
+   0,
+   0
+  ],
+  "draws": 20
+ },
+ "errors": {
+  "sumo_0": 0,
+  "sumo_1": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 40.02,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 1,
+   "round_time": 40.0
+  },
+  {
+   "t": 82.04,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 2,
+   "round_time": 40.0
+  },
+  {
+   "t": 124.04,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 3,
+   "round_time": 40.0
+  },
+  {
+   "t": 166.06,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 4,
+   "round_time": 40.0
+  },
+  {
+   "t": 208.1,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 5,
+   "round_time": 40.0
+  },
+  {
+   "t": 250.14,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 6,
+   "round_time": 40.0
+  },
+  {
+   "t": 292.18,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 7,
+   "round_time": 40.0
+  },
+  {
+   "t": 334.22,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 8,
+   "round_time": 40.0
+  },
+  {
+   "t": 376.26,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 9,
+   "round_time": 40.0
+  },
+  {
+   "t": 418.3,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 10,
+   "round_time": 40.0
+  },
+  {
+   "t": 460.34,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 11,
+   "round_time": 40.0
+  },
+  {
+   "t": 502.38,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 12,
+   "round_time": 40.0
+  },
+  {
+   "t": 544.42,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 13,
+   "round_time": 40.0
+  },
+  {
+   "t": 586.46,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 14,
+   "round_time": 40.0
+  },
+  {
+   "t": 628.5,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 15,
+   "round_time": 40.0
+  },
+  {
+   "t": 670.54,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 16,
+   "round_time": 40.0
+  },
+  {
+   "t": 712.58,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 17,
+   "round_time": 40.0
+  },
+  {
+   "t": 754.62,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 18,
+   "round_time": 40.0
+  },
+  {
+   "t": 796.66,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 19,
+   "round_time": 40.0
+  },
+  {
+   "t": 838.7,
+   "message": "Empate (tempo)",
+   "wins": [
+    0,
+    0
+   ],
+   "draws": 20,
+   "round_time": 40.0
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "sumo_0": 20.0,
+   "sumo_1": 20.0
+  },
+  "phase_s": {
+   "sumo_0": 0.003,
+   "sumo_1": 0.016
+  }
+ }
+}

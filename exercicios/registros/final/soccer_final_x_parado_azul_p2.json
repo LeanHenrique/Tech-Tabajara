@@ -1,0 +1,257 @@
+{
+ "name": "soccer_final_x_parado_azul_p2",
+ "scenario": "soccer",
+ "files": {
+  "blue": "projeto-final/soccer.py"
+ },
+ "seed": 302,
+ "ours": "blue",
+ "opponent": "parado",
+ "sim_time": 300.02,
+ "wall_time": 36.4,
+ "final": {
+  "score": [
+   28,
+   0
+  ]
+ },
+ "errors": {
+  "soccer_blue": 0
+ },
+ "error_total": 0,
+ "events": [
+  {
+   "t": 9.52,
+   "message": "Gol do azul!",
+   "score": [
+    1,
+    0
+   ]
+  },
+  {
+   "t": 21.48,
+   "message": "Gol do azul!",
+   "score": [
+    2,
+    0
+   ]
+  },
+  {
+   "t": 33.34,
+   "message": "Gol do azul!",
+   "score": [
+    3,
+    0
+   ]
+  },
+  {
+   "t": 44.58,
+   "message": "Gol do azul!",
+   "score": [
+    4,
+    0
+   ]
+  },
+  {
+   "t": 56.64,
+   "message": "Gol do azul!",
+   "score": [
+    5,
+    0
+   ]
+  },
+  {
+   "t": 65.52,
+   "message": "Gol do azul!",
+   "score": [
+    6,
+    0
+   ]
+  },
+  {
+   "t": 74.7,
+   "message": "Gol do azul!",
+   "score": [
+    7,
+    0
+   ]
+  },
+  {
+   "t": 86.28,
+   "message": "Gol do azul!",
+   "score": [
+    8,
+    0
+   ]
+  },
+  {
+   "t": 97.44,
+   "message": "Gol do azul!",
+   "score": [
+    9,
+    0
+   ]
+  },
+  {
+   "t": 109.52,
+   "message": "Gol do azul!",
+   "score": [
+    10,
+    0
+   ]
+  },
+  {
+   "t": 119.24,
+   "message": "Gol do azul!",
+   "score": [
+    11,
+    0
+   ]
+  },
+  {
+   "t": 128.82,
+   "message": "Gol do azul!",
+   "score": [
+    12,
+    0
+   ]
+  },
+  {
+   "t": 138.62,
+   "message": "Gol do azul!",
+   "score": [
+    13,
+    0
+   ]
+  },
+  {
+   "t": 149.96,
+   "message": "Gol do azul!",
+   "score": [
+    14,
+    0
+   ]
+  },
+  {
+   "t": 161.94,
+   "message": "Gol do azul!",
+   "score": [
+    15,
+    0
+   ]
+  },
+  {
+   "t": 171.38,
+   "message": "Gol do azul!",
+   "score": [
+    16,
+    0
+   ]
+  },
+  {
+   "t": 183.16,
+   "message": "Gol do azul!",
+   "score": [
+    17,
+    0
+   ]
+  },
+  {
+   "t": 195.1,
+   "message": "Gol do azul!",
+   "score": [
+    18,
+    0
+   ]
+  },
+  {
+   "t": 204.94,
+   "message": "Gol do azul!",
+   "score": [
+    19,
+    0
+   ]
+  },
+  {
+   "t": 216.94,
+   "message": "Gol do azul!",
+   "score": [
+    20,
+    0
+   ]
+  },
+  {
+   "t": 226.56,
+   "message": "Gol do azul!",
+   "score": [
+    21,
+    0
+   ]
+  },
+  {
+   "t": 238.52,
+   "message": "Gol do azul!",
+   "score": [
+    22,
+    0
+   ]
+  },
+  {
+   "t": 247.76,
+   "message": "Gol do azul!",
+   "score": [
+    23,
+    0
+   ]
+  },
+  {
+   "t": 259.04,
+   "message": "Gol do azul!",
+   "score": [
+    24,
+    0
+   ]
+  },
+  {
+   "t": 268.7,
+   "message": "Gol do azul!",
+   "score": [
+    25,
+    0
+   ]
+  },
+  {
+   "t": 278.32,
+   "message": "Gol do azul!",
+   "score": [
+    26,
+    0
+   ]
+  },
+  {
+   "t": 287.94,
+   "message": "Gol do azul!",
+   "score": [
+    27,
+    0
+   ]
+  },
+  {
+   "t": 299.96,
+   "message": "Gol do azul!",
+   "score": [
+    28,
+    0
+   ]
+  }
+ ],
+ "driver": {
+  "state_hz": 25.0,
+  "node_hz": {
+   "soccer_blue": 20.0
+  },
+  "phase_s": {
+   "soccer_blue": 0.027
+  }
+ }
+}

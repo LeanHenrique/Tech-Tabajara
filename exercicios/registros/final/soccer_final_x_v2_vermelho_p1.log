@@ -1,0 +1,130 @@
+    0.04 INFO  [soccer_blue] atacante: None -> 1
+   41.44 INFO  [soccer_blue] atacante: 1 -> 2
+   54.94 INFO  [soccer_blue] atacante: 2 -> 1
+   60.24 INFO  [soccer_blue] atacante: 1 -> 0
+   60.58 INFO  [soccer_blue] atacante: 0 -> 1
+   61.48 INFO  [soccer_blue] atacante: 1 -> 2
+   62.24 INFO  [soccer_blue] atacante: 2 -> 0
+   65.48 INFO  [soccer_blue] atacante: 0 -> 2
+   65.58 INFO  [soccer_blue] robô 2 travado: ré curta com giro
+   65.94 INFO  [soccer_blue] atacante: 2 -> 0
+   66.54 INFO  [soccer_blue] atacante: 0 -> 2
+   66.94 INFO  [soccer_blue] atacante: 2 -> 1
+   68.18 INFO  [soccer_blue] atacante: 1 -> 2
+   71.18 INFO  [soccer_blue] atacante: 2 -> 1
+   72.18 INFO  [soccer_blue] atacante: None -> 2
+   73.68 INFO  [soccer_blue] robô 0 travado: ré curta com giro
+   73.68 INFO  [soccer_blue] robô 1 travado: ré curta com giro
+  101.74 INFO  [soccer_blue] atacante: 2 -> 1
+  102.24 INFO  [soccer_blue] atacante: 1 -> 2
+  103.04 INFO  [soccer_blue] atacante: 2 -> 1
+  103.48 INFO  [soccer_blue] atacante: 1 -> 2
+  103.98 INFO  [soccer_blue] atacante: 2 -> 1
+  104.84 INFO  [soccer_blue] atacante: 1 -> 2
+  105.38 INFO  [soccer_blue] atacante: 2 -> 1
+  105.84 INFO  [soccer_blue] atacante: 1 -> 2
+  106.28 INFO  [soccer_blue] atacante: 2 -> 1
+  110.58 INFO  [soccer_blue] atacante: 1 -> 0
+  115.84 INFO  [soccer_blue] atacante: 0 -> 1
+  116.38 INFO  [soccer_blue] atacante: 1 -> 0
+  116.88 INFO  [soccer_blue] atacante: 0 -> 1
+  118.04 INFO  [soccer_blue] atacante: None -> 1
+  119.54 INFO  [soccer_blue] robô 0 travado: ré curta com giro
+  120.04 INFO  [soccer_blue] atacante: 1 -> 2
+  145.34 INFO  [soccer_blue] atacante: 2 -> 1
+  146.14 INFO  [soccer_blue] atacante: 1 -> 2
+  146.44 INFO  [soccer_blue] atacante: 2 -> 1
+  147.18 INFO  [soccer_blue] atacante: 1 -> 2
+  147.64 INFO  [soccer_blue] atacante: 2 -> 1
+  148.44 INFO  [soccer_blue] atacante: 1 -> 2
+  149.28 INFO  [soccer_blue] atacante: 2 -> 1
+  154.74 INFO  [soccer_blue] atacante: 1 -> 2
+  157.24 INFO  [soccer_blue] atacante: 2 -> 0
+  157.38 INFO  [soccer_blue] atacante: None -> 0
+  158.94 INFO  [soccer_blue] robô 1 travado: ré curta com giro
+  158.94 INFO  [soccer_blue] robô 2 travado: ré curta com giro
+  159.38 INFO  [soccer_blue] atacante: 0 -> 1
+  193.94 INFO  [soccer_blue] atacante: 1 -> 2
+  204.24 INFO  [soccer_blue] atacante: 2 -> 1
+  210.64 INFO  [soccer_blue] atacante: 1 -> 2
+  210.98 INFO  [soccer_blue] atacante: 2 -> 1
+  213.08 INFO  [soccer_blue] atacante: 1 -> 2
+  213.24 INFO  [soccer_blue] atacante: 2 -> 0
+  214.14 INFO  [soccer_blue] atacante: 0 -> 1
+  214.18 INFO  [soccer_blue] atacante: None -> 1
+  215.14 INFO  [soccer_blue] atacante: 1 -> 0
+  216.18 INFO  [soccer_blue] atacante: 0 -> 1
+  259.94 INFO  [soccer_blue] atacante: 1 -> 2
+  261.04 INFO  [soccer_blue] atacante: 2 -> 0
+  261.28 INFO  [soccer_blue] atacante: None -> 1
+  262.84 INFO  [soccer_blue] robô 2 travado: ré curta com giro
+  262.98 INFO  [soccer_blue] robô 1 travado: ré curta com giro
+  263.24 INFO  [soccer_blue] robô 0 travado: ré curta com giro
+    0.06 INFO  [soccer_red] [PAPEIS] goleiro=hero_3 | atacante=hero_4 | apoio=hero_5
+    5.06 INFO  [soccer_red] [STATUS] t=5.1s time=red | bola=(-0.04, 0.18) v=(0.16, -0.00) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.11, 0.17) | hero_2=(-0.48, 0.13) | hero_3=(0.74, 0.00) | hero_4=(0.04, 0.17) | hero_5=(0.22, 0.00)
+   10.10 INFO  [soccer_red] [STATUS] t=10.1s time=red | bola=(-0.06, 0.01) v=(0.00, -0.07) atacante=hero_4 | hero_0=(-0.80, 0.02) | hero_1=(-0.18, 0.07) | hero_2=(-0.48, 0.05) | hero_3=(0.74, -0.00) | hero_4=(0.05, 0.07) | hero_5=(0.12, -0.09)
+   15.16 INFO  [soccer_red] [STATUS] t=15.2s time=red | bola=(-0.12, -0.39) v=(-0.11, 0.22) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.14, -0.47) | hero_2=(-0.47, -0.49) | hero_3=(0.74, -0.00) | hero_4=(-0.07, -0.42) | hero_5=(0.19, -0.30)
+   20.16 INFO  [soccer_red] [STATUS] t=20.2s time=red | bola=(-0.24, 0.07) v=(-0.00, 0.06) atacante=hero_4 | hero_0=(-0.80, 0.06) | hero_1=(-0.36, -0.02) | hero_2=(-0.65, 0.05) | hero_3=(0.72, 0.00) | hero_4=(-0.16, -0.03) | hero_5=(-0.02, -0.00)
+   25.16 INFO  [soccer_red] [STATUS] t=25.2s time=red | bola=(-0.35, 0.37) v=(-0.00, 0.08) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.45, 0.33) | hero_2=(-0.57, 0.17) | hero_3=(0.72, 0.00) | hero_4=(-0.26, 0.26) | hero_5=(-0.10, 0.15)
+   30.16 INFO  [soccer_red] [STATUS] t=30.2s time=red | bola=(-0.37, 0.08) v=(0.00, -0.16) atacante=hero_4 | hero_0=(-0.79, 0.11) | hero_1=(-0.43, 0.16) | hero_2=(-0.59, 0.07) | hero_3=(0.72, 0.00) | hero_4=(-0.36, 0.16) | hero_5=(-0.21, 0.02)
+   35.20 INFO  [soccer_red] [STATUS] t=35.2s time=red | bola=(-0.38, -0.52) v=(-0.00, -0.05) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.50, -0.48) | hero_2=(-0.59, -0.26) | hero_3=(0.72, 0.00) | hero_4=(-0.26, -0.46) | hero_5=(-0.10, -0.33)
+   40.26 INFO  [soccer_red] [STATUS] t=40.3s time=red | bola=(-0.43, -0.28) v=(-0.00, 0.00) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.54, -0.30) | hero_2=(-0.61, -0.14) | hero_3=(0.72, 0.00) | hero_4=(-0.36, -0.30) | hero_5=(-0.25, -0.16)
+   42.20 INFO  [soccer_red] [ATACANTE] hero_4 -> hero_5 | eta 2.05s vs 1.76s
+   42.20 INFO  [soccer_red] [PAPEIS] goleiro=hero_3 | atacante=hero_5 | apoio=hero_4
+   45.30 INFO  [soccer_red] [STATUS] t=45.3s time=red | bola=(-0.49, 0.31) v=(0.14, -0.18) atacante=hero_5 | hero_0=(-0.80, 0.16) | hero_1=(-0.66, 0.17) | hero_2=(-0.55, 0.33) | hero_3=(0.72, 0.00) | hero_4=(-0.35, 0.19) | hero_5=(-0.46, 0.36)
+   46.20 INFO  [soccer_red] [ATACANTE] hero_5 -> hero_4 | eta 1.66s vs 1.19s
+   46.20 INFO  [soccer_red] [PAPEIS] goleiro=hero_3 | atacante=hero_4 | apoio=hero_5
+   50.36 INFO  [soccer_red] [STATUS] t=50.4s time=red | bola=(-0.50, 0.02) v=(-0.08, 0.11) atacante=hero_4 | hero_0=(-0.79, -0.00) | hero_1=(-0.64, -0.01) | hero_2=(-0.54, -0.12) | hero_3=(0.72, 0.00) | hero_4=(-0.48, -0.05) | hero_5=(-0.27, 0.06)
+   55.40 INFO  [soccer_red] [STATUS] t=55.4s time=red | bola=(-0.64, 0.46) v=(-0.00, 0.03) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.74, 0.35) | hero_2=(-0.72, 0.22) | hero_3=(0.72, 0.00) | hero_4=(-0.54, 0.48) | hero_5=(-0.36, 0.28)
+   60.46 INFO  [soccer_red] [STATUS] t=60.5s time=red | bola=(-0.88, 0.21) v=(0.00, -0.02) atacante=hero_4 | hero_0=(-0.78, 0.15) | hero_1=(-0.82, 0.22) | hero_2=(-0.84, 0.11) | hero_3=(0.72, 0.00) | hero_4=(-0.86, 0.40) | hero_5=(-0.41, 0.18)
+   65.46 INFO  [soccer_red] [STATUS] t=65.5s time=red | bola=(-0.88, 0.23) v=(-0.00, -0.00) atacante=hero_4 | hero_0=(-0.79, 0.16) | hero_1=(-0.85, 0.12) | hero_2=(-0.84, 0.05) | hero_3=(0.72, 0.00) | hero_4=(-0.86, 0.39) | hero_5=(-0.39, 0.17)
+   70.46 INFO  [soccer_red] [STATUS] t=70.5s time=red | bola=(-0.88, 0.21) v=(-0.00, -0.03) atacante=hero_4 | hero_0=(-0.80, 0.13) | hero_1=(-0.82, 0.20) | hero_2=(-0.88, 0.16) | hero_3=(0.72, 0.00) | hero_4=(-0.86, 0.27) | hero_5=(-0.37, 0.18)
+   75.46 INFO  [soccer_red] [STATUS] t=75.5s time=red | bola=(0.00, -0.05) v=(0.00, 0.00) atacante=hero_4 | hero_0=(-0.80, -0.05) | hero_1=(-0.46, 0.11) | hero_2=(-0.15, -0.08) | hero_3=(0.75, -0.00) | hero_4=(0.19, -0.10) | hero_5=(0.21, 0.11)
+   80.46 INFO  [soccer_red] [STATUS] t=80.5s time=red | bola=(-0.10, 0.26) v=(-0.11, -0.11) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.33, 0.54) | hero_2=(-0.10, 0.36) | hero_3=(0.74, -0.00) | hero_4=(-0.05, 0.30) | hero_5=(0.13, 0.19)
+   85.46 INFO  [soccer_red] [STATUS] t=85.5s time=red | bola=(-0.26, -0.14) v=(-0.00, -0.03) atacante=hero_4 | hero_0=(-0.80, -0.14) | hero_1=(-0.53, -0.04) | hero_2=(-0.37, -0.15) | hero_3=(0.72, -0.00) | hero_4=(-0.14, -0.13) | hero_5=(0.04, 0.06)
+   90.46 INFO  [soccer_red] [STATUS] t=90.5s time=red | bola=(-0.26, -0.06) v=(0.00, 0.10) atacante=hero_4 | hero_0=(-0.80, -0.08) | hero_1=(-0.53, -0.04) | hero_2=(-0.38, -0.14) | hero_3=(0.72, -0.00) | hero_4=(-0.16, -0.16) | hero_5=(-0.08, 0.04)
+   95.46 INFO  [soccer_red] [STATUS] t=95.5s time=red | bola=(-0.35, 0.12) v=(-0.11, -0.12) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.56, 0.09) | hero_2=(-0.38, 0.20) | hero_3=(0.72, -0.00) | hero_4=(-0.31, 0.18) | hero_5=(-0.13, 0.05)
+  100.46 INFO  [soccer_red] [STATUS] t=100.5s time=red | bola=(-0.50, -0.14) v=(-0.00, -0.00) atacante=hero_4 | hero_0=(-0.80, -0.14) | hero_1=(-0.64, -0.07) | hero_2=(-0.61, -0.14) | hero_3=(0.72, -0.00) | hero_4=(-0.39, -0.14) | hero_5=(-0.22, 0.04)
+  105.46 INFO  [soccer_red] [STATUS] t=105.5s time=red | bola=(-0.65, -0.05) v=(0.04, -0.04) atacante=hero_4 | hero_0=(-0.81, -0.04) | hero_1=(-0.78, 0.03) | hero_2=(-0.74, -0.05) | hero_3=(0.72, -0.00) | hero_4=(-0.63, 0.08) | hero_5=(-0.50, 0.02)
+  110.46 INFO  [soccer_red] [STATUS] t=110.5s time=red | bola=(-0.79, -0.27) v=(-0.00, -0.11) atacante=hero_4 | hero_0=(-0.79, -0.17) | hero_1=(-0.86, -0.14) | hero_2=(-0.79, -0.10) | hero_3=(0.72, -0.00) | hero_4=(-0.70, -0.18) | hero_5=(-0.55, -0.09)
+  115.46 INFO  [soccer_red] [STATUS] t=115.5s time=red | bola=(-0.88, -0.20) v=(0.00, 0.15) atacante=hero_4 | hero_0=(-0.77, -0.26) | hero_1=(-0.88, -0.12) | hero_2=(-0.80, -0.12) | hero_3=(0.72, -0.00) | hero_4=(-0.86, -0.31) | hero_5=(-0.40, -0.22)
+  120.46 INFO  [soccer_red] [STATUS] t=120.5s time=red | bola=(0.00, -0.04) v=(0.00, 0.00) atacante=hero_4 | hero_0=(-0.81, -0.02) | hero_1=(-0.39, 0.27) | hero_2=(-0.28, -0.20) | hero_3=(0.75, -0.00) | hero_4=(0.40, -0.24) | hero_5=(0.33, 0.21)
+  125.46 INFO  [soccer_red] [STATUS] t=125.5s time=red | bola=(0.04, 0.40) v=(0.00, 0.02) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.30, 0.55) | hero_2=(-0.07, 0.44) | hero_3=(0.76, 0.00) | hero_4=(0.15, 0.40) | hero_5=(0.32, 0.21)
+  130.50 INFO  [soccer_red] [STATUS] t=130.5s time=red | bola=(-0.06, -0.08) v=(-0.00, -0.15) atacante=hero_4 | hero_0=(-0.81, -0.02) | hero_1=(-0.41, 0.21) | hero_2=(-0.15, 0.04) | hero_3=(0.74, 0.00) | hero_4=(0.00, 0.06) | hero_5=(0.14, -0.05)
+  135.56 INFO  [soccer_red] [STATUS] t=135.6s time=red | bola=(-0.18, -0.31) v=(-0.09, 0.17) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.52, -0.41) | hero_2=(-0.19, -0.40) | hero_3=(0.73, 0.00) | hero_4=(-0.13, -0.35) | hero_5=(0.15, -0.24)
+  140.60 INFO  [soccer_red] [STATUS] t=140.6s time=red | bola=(-0.23, 0.15) v=(0.00, 0.02) atacante=hero_4 | hero_0=(-0.80, 0.15) | hero_1=(-0.64, 0.26) | hero_2=(-0.34, 0.14) | hero_3=(0.72, 0.00) | hero_4=(-0.12, 0.12) | hero_5=(0.06, -0.05)
+  145.66 INFO  [soccer_red] [STATUS] t=145.7s time=red | bola=(-0.53, 0.21) v=(-0.17, -0.10) atacante=hero_4 | hero_0=(-0.80, 0.05) | hero_1=(-0.58, 0.25) | hero_2=(-0.52, 0.38) | hero_3=(0.72, 0.00) | hero_4=(-0.50, 0.25) | hero_5=(-0.32, 0.11)
+  150.70 INFO  [soccer_red] [STATUS] t=150.7s time=red | bola=(-0.74, -0.23) v=(-0.00, -0.12) atacante=hero_4 | hero_0=(-0.80, -0.17) | hero_1=(-0.78, -0.06) | hero_2=(-0.73, -0.00) | hero_3=(0.72, 0.00) | hero_4=(-0.63, -0.13) | hero_5=(-0.46, -0.00)
+  155.76 INFO  [soccer_red] [STATUS] t=155.8s time=red | bola=(-0.88, -0.25) v=(0.01, 0.02) atacante=hero_4 | hero_0=(-0.83, -0.11) | hero_1=(-0.79, -0.17) | hero_2=(-0.86, -0.19) | hero_3=(0.72, 0.00) | hero_4=(-0.86, -0.30) | hero_5=(-0.40, -0.23)
+  160.80 INFO  [soccer_red] [STATUS] t=160.8s time=red | bola=(0.00, 0.02) v=(0.00, 0.00) atacante=hero_4 | hero_0=(-0.80, 0.02) | hero_1=(-0.16, 0.08) | hero_2=(-0.50, -0.04) | hero_3=(0.75, -0.00) | hero_4=(0.20, -0.06) | hero_5=(0.28, 0.04)
+  165.86 INFO  [soccer_red] [STATUS] t=165.9s time=red | bola=(-0.11, 0.32) v=(-0.01, 0.08) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.22, 0.26) | hero_2=(-0.51, 0.21) | hero_3=(0.73, 0.00) | hero_4=(-0.05, 0.20) | hero_5=(0.10, 0.13)
+  170.90 INFO  [soccer_red] [STATUS] t=170.9s time=red | bola=(-0.12, -0.05) v=(0.01, -0.26) atacante=hero_4 | hero_0=(-0.79, 0.03) | hero_1=(-0.18, 0.04) | hero_2=(-0.50, -0.09) | hero_3=(0.73, 0.00) | hero_4=(-0.10, 0.05) | hero_5=(0.07, -0.08)
+  175.96 INFO  [soccer_red] [STATUS] t=176.0s time=red | bola=(-0.24, -0.23) v=(-0.02, 0.13) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.31, -0.42) | hero_2=(-0.55, -0.42) | hero_3=(0.72, 0.00) | hero_4=(-0.28, -0.32) | hero_5=(-0.04, -0.21)
+  181.00 INFO  [soccer_red] [STATUS] t=181.0s time=red | bola=(-0.30, 0.06) v=(-0.01, 0.04) atacante=hero_4 | hero_0=(-0.81, 0.05) | hero_1=(-0.36, 0.06) | hero_2=(-0.54, 0.03) | hero_3=(0.72, -0.00) | hero_4=(-0.25, 0.04) | hero_5=(-0.01, -0.11)
+  186.06 INFO  [soccer_red] [STATUS] t=186.1s time=red | bola=(-0.38, 0.36) v=(0.01, -0.19) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.44, 0.38) | hero_2=(-0.59, 0.19) | hero_3=(0.72, -0.00) | hero_4=(-0.33, 0.39) | hero_5=(-0.20, 0.25)
+  191.10 INFO  [soccer_red] [STATUS] t=191.1s time=red | bola=(-0.38, -0.31) v=(0.00, -0.10) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.50, -0.21) | hero_2=(-0.59, -0.15) | hero_3=(0.72, -0.00) | hero_4=(-0.27, -0.19) | hero_5=(-0.10, -0.09)
+  196.16 INFO  [soccer_red] [STATUS] t=196.2s time=red | bola=(-0.47, -0.04) v=(-0.01, 0.14) atacante=hero_4 | hero_0=(-0.80, -0.06) | hero_1=(-0.63, -0.03) | hero_2=(-0.53, -0.12) | hero_3=(0.72, -0.00) | hero_4=(-0.45, -0.14) | hero_5=(-0.28, 0.02)
+  201.20 INFO  [soccer_red] [STATUS] t=201.2s time=red | bola=(-0.55, 0.26) v=(-0.04, -0.02) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.68, 0.13) | hero_2=(-0.61, 0.26) | hero_3=(0.72, -0.00) | hero_4=(-0.49, 0.27) | hero_5=(-0.37, 0.15)
+  206.26 INFO  [soccer_red] [STATUS] t=206.3s time=red | bola=(-0.58, 0.16) v=(-0.00, -0.00) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.66, 0.17) | hero_2=(-0.68, 0.08) | hero_3=(0.72, -0.00) | hero_4=(-0.49, 0.19) | hero_5=(-0.40, 0.04)
+  211.30 INFO  [soccer_red] [STATUS] t=211.3s time=red | bola=(-0.69, -0.28) v=(-0.00, -0.05) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.73, -0.16) | hero_2=(-0.76, -0.23) | hero_3=(0.72, -0.00) | hero_4=(-0.59, -0.19) | hero_5=(-0.47, -0.08)
+  216.36 INFO  [soccer_red] [STATUS] t=216.4s time=red | bola=(0.00, 0.03) v=(0.00, 0.00) atacante=hero_4 | hero_0=(-0.79, 0.00) | hero_1=(-0.34, 0.20) | hero_2=(-0.34, -0.30) | hero_3=(0.76, -0.00) | hero_4=(0.32, -0.25) | hero_5=(0.34, 0.30)
+  221.40 INFO  [soccer_red] [STATUS] t=221.4s time=red | bola=(-0.04, 0.24) v=(-0.09, 0.15) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.09, 0.20) | hero_2=(-0.42, 0.16) | hero_3=(0.75, -0.00) | hero_4=(0.00, 0.20) | hero_5=(0.23, 0.02)
+  226.46 INFO  [soccer_red] [STATUS] t=226.5s time=red | bola=(-0.08, 0.05) v=(-0.00, -0.05) atacante=hero_4 | hero_0=(-0.79, 0.06) | hero_1=(-0.20, 0.07) | hero_2=(-0.51, 0.07) | hero_3=(0.74, -0.00) | hero_4=(0.03, 0.08) | hero_5=(0.10, -0.06)
+  231.50 INFO  [soccer_red] [STATUS] t=231.5s time=red | bola=(-0.13, -0.42) v=(-0.11, 0.21) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.16, -0.48) | hero_2=(-0.51, -0.51) | hero_3=(0.74, 0.00) | hero_4=(-0.07, -0.44) | hero_5=(0.15, -0.32)
+  236.56 INFO  [soccer_red] [STATUS] t=236.6s time=red | bola=(-0.20, 0.09) v=(-0.00, 0.05) atacante=hero_4 | hero_0=(-0.80, 0.08) | hero_1=(-0.32, 0.08) | hero_2=(-0.59, 0.09) | hero_3=(0.72, -0.00) | hero_4=(-0.09, 0.06) | hero_5=(0.04, -0.03)
+  241.60 INFO  [soccer_red] [STATUS] t=241.6s time=red | bola=(-0.32, 0.29) v=(-0.12, -0.13) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.34, 0.42) | hero_2=(-0.55, 0.36) | hero_3=(0.72, 0.00) | hero_4=(-0.29, 0.34) | hero_5=(-0.10, 0.21)
+  246.66 INFO  [soccer_red] [STATUS] t=246.7s time=red | bola=(-0.44, -0.13) v=(-0.00, -0.02) atacante=hero_4 | hero_0=(-0.80, -0.13) | hero_1=(-0.56, -0.13) | hero_2=(-0.62, -0.06) | hero_3=(0.72, -0.00) | hero_4=(-0.33, -0.10) | hero_5=(-0.16, 0.07)
+  251.70 INFO  [soccer_red] [STATUS] t=251.7s time=red | bola=(-0.46, -0.08) v=(0.00, 0.13) atacante=hero_4 | hero_0=(-0.82, -0.14) | hero_1=(-0.58, -0.19) | hero_2=(-0.63, -0.06) | hero_3=(0.72, -0.00) | hero_4=(-0.40, -0.27) | hero_5=(-0.28, -0.03)
+  256.76 INFO  [soccer_red] [STATUS] t=256.8s time=red | bola=(-0.44, 0.52) v=(-0.00, 0.04) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.56, 0.49) | hero_2=(-0.62, 0.26) | hero_3=(0.72, -0.00) | hero_4=(-0.31, 0.50) | hero_5=(-0.16, 0.33)
+  261.80 INFO  [soccer_red] [STATUS] t=261.8s time=red | bola=(-0.96, 0.05) v=(-0.10, -0.08) atacante=hero_4 | hero_0=(-0.81, 0.08) | hero_1=(-0.81, 0.18) | hero_2=(-0.73, 0.10) | hero_3=(0.72, -0.00) | hero_4=(-0.88, 0.14) | hero_5=(-0.58, 0.11)
+  263.80 INFO  [soccer_red] [ATACANTE] hero_4 -> hero_5 | eta 2.15s vs 1.81s
+  263.80 INFO  [soccer_red] [PAPEIS] goleiro=hero_3 | atacante=hero_5 | apoio=hero_4
+  266.86 INFO  [soccer_red] [STATUS] t=266.9s time=red | bola=(-0.10, 0.13) v=(-0.05, 0.11) atacante=hero_5 | hero_0=(-0.80, 0.12) | hero_1=(-0.18, 0.08) | hero_2=(-0.45, -0.03) | hero_3=(0.74, 0.00) | hero_4=(0.09, -0.02) | hero_5=(-0.07, 0.04)
+  271.90 INFO  [soccer_red] [STATUS] t=271.9s time=red | bola=(-0.18, 0.25) v=(-0.02, -0.20) atacante=hero_5 | hero_0=(-0.80, 0.16) | hero_1=(-0.23, 0.37) | hero_2=(-0.54, 0.34) | hero_3=(0.72, 0.00) | hero_4=(0.02, 0.20) | hero_5=(-0.17, 0.34)
+  276.96 INFO  [soccer_red] [STATUS] t=277.0s time=red | bola=(-0.26, -0.16) v=(-0.00, -0.02) atacante=hero_5 | hero_0=(-0.80, -0.16) | hero_1=(-0.39, -0.16) | hero_2=(-0.53, -0.08) | hero_3=(0.72, -0.00) | hero_4=(-0.01, 0.03) | hero_5=(-0.16, -0.10)
+  281.90 INFO  [soccer_red] [ATACANTE] hero_5 -> hero_4 | eta 1.66s vs 1.35s
+  281.90 INFO  [soccer_red] [PAPEIS] goleiro=hero_3 | atacante=hero_4 | apoio=hero_5
+  282.00 INFO  [soccer_red] [STATUS] t=282.0s time=red | bola=(-0.29, -0.04) v=(-0.00, 0.17) atacante=hero_4 | hero_0=(-0.82, -0.10) | hero_1=(-0.36, -0.25) | hero_2=(-0.55, -0.04) | hero_3=(0.72, 0.00) | hero_4=(-0.11, -0.00) | hero_5=(-0.20, -0.23)
+  287.06 INFO  [soccer_red] [STATUS] t=287.1s time=red | bola=(-0.42, 0.32) v=(-0.06, 0.12) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.47, 0.29) | hero_2=(-0.60, 0.15) | hero_3=(0.72, 0.00) | hero_4=(-0.38, 0.28) | hero_5=(-0.20, 0.16)
+  292.10 INFO  [soccer_red] [STATUS] t=292.1s time=red | bola=(-0.49, 0.17) v=(-0.00, -0.00) atacante=hero_4 | hero_0=(-0.80, 0.16) | hero_1=(-0.55, 0.19) | hero_2=(-0.64, 0.09) | hero_3=(0.72, 0.00) | hero_4=(-0.41, 0.19) | hero_5=(-0.31, 0.05)
+  297.16 INFO  [soccer_red] [STATUS] t=297.2s time=red | bola=(-0.55, -0.25) v=(-0.00, -0.03) atacante=hero_4 | hero_0=(-0.80, -0.16) | hero_1=(-0.68, -0.25) | hero_2=(-0.68, -0.12) | hero_3=(0.72, 0.00) | hero_4=(-0.44, -0.25) | hero_5=(-0.26, -0.05)
